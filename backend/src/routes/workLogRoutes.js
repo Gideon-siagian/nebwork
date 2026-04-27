@@ -12,12 +12,23 @@ const {
   deleteCollaborator,
   filterWorkLogs,
   getWorkLogById,
+  summarizeWorkLogs,
+  getRelatedWorkLogs,
+  getMyStats,
+  createVideoMeeting,
+  getVideoMeeting,
 } = require("../controllers/workLogController");
 const { protect } = require("../middlewares/authMiddleware");
 
 // Worklog Routes
-router.get("/filter", protect, filterWorkLogs);  // GET filter worklogs (MUST BE BEFORE /:id)
-router.get("/:id", protect, getWorkLogById);  // GET detail worklog by ID
+router.get("/", protect, filterWorkLogs);                // GET list/query worklogs
+router.get("/filter", protect, filterWorkLogs);         // GET filter worklogs (MUST BE BEFORE /:id)
+router.get("/my-stats", protect, getMyStats);           // GET personal activity stats
+router.post("/summarize", protect, summarizeWorkLogs);  // POST AI summary of visible worklogs
+router.get("/:id/related", protect, getRelatedWorkLogs); // GET semantically similar worklogs
+router.get("/:id/video-meeting", protect, getVideoMeeting);
+router.post("/:id/video-meeting", protect, createVideoMeeting);
+router.get("/:id", protect, getWorkLogById);             // GET detail worklog by ID
 router.post("/", protect, addWorkLog);
 router.put("/:id", protect, editWorkLog);
 router.delete("/:id", protect, deleteWorkLog);

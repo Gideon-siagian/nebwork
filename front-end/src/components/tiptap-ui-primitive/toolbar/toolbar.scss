@@ -1,6 +1,6 @@
 :root {
   --tt-toolbar-height: 2.75rem;
-  --tt-navbar-height: 4.5rem; /* Navbar height (~72px) */
+  --tt-navbar-height: 6.5rem;
   --tt-safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --tt-toolbar-bg-color: var(--white);
   --tt-toolbar-border-color: var(--tt-gray-light-a-100);
@@ -32,9 +32,9 @@
   }
 
   &[data-variant="fixed"] {
-    position: sticky;
-    top: 0; /* Stick at top of scrolling container */
-    z-index: 40; /* Below navbar (z-index: 50) */
+    position: relative;
+    top: auto;
+    z-index: 1;
     width: 100%;
     min-height: var(--tt-toolbar-height);
     background: var(--tt-toolbar-bg-color);

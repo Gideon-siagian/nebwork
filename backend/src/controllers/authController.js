@@ -4,7 +4,7 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { validatePassword } = require('../utils/passwordValidator');
-const ALLOWED_DOMAINS_REGEX=/@(gmail\.com|yahoo\.com)$/i;
+const { isAllowedEmailDomain, getAllowedDomainsMessage } = require('../utils/emailDomainValidator');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
@@ -39,8 +39,8 @@ module.exports = {
         return res.status(400).json({message: 'Please provide email and password'});
       }
 
-      if(!ALLOWED_DOMAINS_REGEX.test(email)){
-        return res.status(400).json({message : "Email domain is not allowed. Use gmail or yahoo."});
+      if(!isAllowedEmailDomain(email)){
+        return res.status(400).json({message : getAllowedDomainsMessage()});
       }
 
       const user = await User.findOne({email});
@@ -74,9 +74,11 @@ module.exports = {
           dateOfJoin: user.join_date
         }
       });
-      
     } catch (error) {
-      return res.status(500).json({message: 'Internal server error'});
+      return res.status(500).json({
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   },
   logout: async (req, res) => {

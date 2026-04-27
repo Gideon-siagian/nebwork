@@ -1,5 +1,6 @@
 import { Selection, TextSelection } from "@tiptap/pm/state"
 import { MAX_FILE_SIZE } from "@/lib/media-constants"
+import BASE_URL from "@/config/api"
 
 export { MAX_FILE_SIZE }
 
@@ -319,9 +320,6 @@ export const handleImageUpload = async (file, onProgress, abortSignal) => {
         reject(new Error('Upload cancelled'))
       })
 
-      // Get API base URL - use DigitalOcean production backend
-      const BASE_URL = 'https://nebwork-backend-fx667.ondigitalocean.app';
-
       // Send request
       xhr.open('POST', `${BASE_URL}/api/upload`)
       xhr.setRequestHeader('Authorization', `Bearer ${token}`)
@@ -352,8 +350,6 @@ export const deleteMediaFile = async (url) => {
       throw new Error("Authentication required")
     }
 
-    const BASE_URL = 'https://nebwork-backend-fx667.ondigitalocean.app'
-    
     const response = await fetch(`${BASE_URL}/api/upload`, {
       method: 'DELETE',
       headers: {

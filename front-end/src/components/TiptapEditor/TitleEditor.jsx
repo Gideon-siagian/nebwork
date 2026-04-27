@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit"
 import Placeholder from "@tiptap/extension-placeholder"
 import "./TitleEditor.scss"
 
-export const TitleEditor = ({ onChange, initialValue = "" }) => {
+export const TitleEditor = ({ onChange, initialValue = "", editable = true }) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -23,6 +23,7 @@ export const TitleEditor = ({ onChange, initialValue = "" }) => {
       }),
     ],
     content: initialValue,
+    editable,
     editorProps: {
       attributes: {
         class: "title-editor-content",
@@ -43,7 +44,13 @@ export const TitleEditor = ({ onChange, initialValue = "" }) => {
   }, [initialValue, editor])
 
   React.useEffect(() => {
-    if (!editor) return
+    if (editor) {
+      editor.setEditable(editable)
+    }
+  }, [editable, editor])
+
+  React.useEffect(() => {
+    if (!editor || !editable) return
 
     // Prevent multi-line in title (convert Enter to nothing)
     const handleKeyDown = (event) => {
@@ -58,7 +65,7 @@ export const TitleEditor = ({ onChange, initialValue = "" }) => {
     return () => {
       editorElement.removeEventListener("keydown", handleKeyDown)
     }
-  }, [editor])
+  }, [editable, editor])
 
   return (
     <div className="title-editor">

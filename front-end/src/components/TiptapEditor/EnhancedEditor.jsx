@@ -41,6 +41,7 @@ export const EnhancedEditor = ({
   onTagsChange,
   onFocusChange,
   editor,
+  editable = true,
 }) => {
   const [title, setTitle] = React.useState(initialTitle)
   const [tags, setTags] = React.useState(normalizeTags(initialTags))
@@ -106,8 +107,8 @@ export const EnhancedEditor = ({
 
   return (
     <div className="enhanced-editor-header" ref={containerRef} onClick={handleClick}>
-      <TitleEditor initialValue={title} onChange={handleTitleChange} />
-      <TagInput tags={tags} onTagsChange={handleTagsChange} />
+      <TitleEditor initialValue={title} onChange={handleTitleChange} editable={editable} />
+      <TagInput tags={tags} onTagsChange={handleTagsChange} readOnly={!editable} />
       <div className="enhanced-editor-separator" />
     </div>
   )

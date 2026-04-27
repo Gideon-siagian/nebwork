@@ -191,7 +191,8 @@ export function SimpleEditor({
   initialTitle = "", 
   initialTags = [], 
   onTitleChange, 
-  onTagsChange
+  onTagsChange,
+  editable = true,
 }) {
   const isMobile = useIsMobile()
   const { height } = useWindowSize()
@@ -209,6 +210,7 @@ export function SimpleEditor({
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
+    editable,
     editorProps: {
       attributes: {
         autocomplete: "off",
@@ -307,6 +309,12 @@ export function SimpleEditor({
   }, [initialContent, editor]);
 
   React.useEffect(() => {
+    if (editor) {
+      editor.setEditable(editable)
+    }
+  }, [editable, editor])
+
+  React.useEffect(() => {
     if (!isMobile && mobileView !== "main") {
       setMobileView("main")
     }
@@ -323,30 +331,32 @@ export function SimpleEditor({
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          ref={toolbarRef}
-          data-variant="fixed"
-          className={isToolbarDisabled ? "toolbar-disabled" : ""}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}>
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              onBack={onBack}
-              onVersion={onVersion}
-              isMobile={isMobile} />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")} />
-          )}
-        </Toolbar>
+        {editable ? (
+          <Toolbar
+            ref={toolbarRef}
+            data-variant="fixed"
+            className={isToolbarDisabled ? "toolbar-disabled" : ""}
+            style={{
+              ...(isMobile
+                ? {
+                    bottom: `calc(100% - ${height - rect.y}px)`,
+                  }
+                : {}),
+            }}>
+            {mobileView === "main" ? (
+              <MainToolbarContent
+                onHighlighterClick={() => setMobileView("highlighter")}
+                onLinkClick={() => setMobileView("link")}
+                onBack={onBack}
+                onVersion={onVersion}
+                isMobile={isMobile} />
+            ) : (
+              <MobileToolbarContent
+                type={mobileView === "highlighter" ? "highlighter" : "link"}
+                onBack={() => setMobileView("main")} />
+            )}
+          </Toolbar>
+        ) : null}
 
         <div 
           className={`simple-editor-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} 
@@ -359,6 +369,7 @@ export function SimpleEditor({
             initialTags={initialTags}
             onTitleChange={onTitleChange}
             onTagsChange={onTagsChange}
+            editable={editable}
           />
           <EditorContent editor={editor} role="presentation" />
         </div>

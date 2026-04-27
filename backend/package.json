@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest --runInBand --json --outputFile=reports/test-results.json"
+    "test": "jest --runInBand --json --outputFile=reports/test-results.json",
+    "seed:admin": "node src/scripts/createAdmin.js"
   },
   "keywords": [
     "worklog",

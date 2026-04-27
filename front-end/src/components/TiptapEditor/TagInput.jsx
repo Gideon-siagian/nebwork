@@ -13,7 +13,7 @@ const TAG_COLORS = [
   "#e5e7eb", // gray
 ]
 
-export const TagInput = ({ tags = [], onTagsChange }) => {
+export const TagInput = ({ tags = [], onTagsChange, readOnly = false }) => {
   const [isInputVisible, setIsInputVisible] = React.useState(false)
   const [inputValue, setInputValue] = React.useState("")
   const inputRef = React.useRef(null)
@@ -84,7 +84,7 @@ export const TagInput = ({ tags = [], onTagsChange }) => {
   return (
     <div className="tag-input-container">
       <div className="tag-list">
-        {!isInputVisible && (
+        {!readOnly && !isInputVisible && (
           <button
             className="add-tag-button"
             onClick={handleAddTagClick}
@@ -93,7 +93,7 @@ export const TagInput = ({ tags = [], onTagsChange }) => {
           </button>
         )}
 
-        {isInputVisible && (
+        {!readOnly && isInputVisible && (
           <div className="tag-input-wrapper">
             <input
               ref={inputRef}
@@ -122,13 +122,15 @@ export const TagInput = ({ tags = [], onTagsChange }) => {
             className="tag-item"
             style={{ backgroundColor: tag.color }}>
             <span className="tag-text">{tag.text}</span>
-            <button
-              className="tag-remove-button"
-              onClick={() => handleRemoveTag(tag.id)}
-              type="button"
-              aria-label="Remove tag">
-              <CloseIcon />
-            </button>
+            {!readOnly ? (
+              <button
+                className="tag-remove-button"
+                onClick={() => handleRemoveTag(tag.id)}
+                type="button"
+                aria-label="Remove tag">
+                <CloseIcon />
+              </button>
+            ) : null}
           </div>
         ))}
       </div>

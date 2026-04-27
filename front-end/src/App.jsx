@@ -1,62 +1,44 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
-import Index from "./pages/Index";
-import ChatBotPage from "./pages/ChatBotPage";
-import Admin from "./pages/Admin/Admin";
-import WorkLog from "./pages/WorkLog/WorkLog";
-import WorkLogVersion from "./pages/WorkLogVersion";
-import Profile from "./pages/Profile";
-import BlogEditor from "./pages/BlogEditor";
-import BlogPost from "./pages/BlogPost";
-import ResetPassword from "./pages/ResetPassword/ResetPassword";
-import NewPassword from "./pages/NewPassword/NewPassword";
-import NotFound from "./pages/NotFound";
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
-import { validateAndCleanupToken } from './utils/authUtils';
-import Login from "./pages/Login/Login";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import NebworkAnalytics from "@/pages/NebworkAnalytics";
+import NebworkAdmin from "@/pages/NebworkAdmin";
+import NebworkAssistantChat from "@/pages/NebworkAssistantChat";
+import NebworkEditor from "@/pages/NebworkEditor";
+import NebworkHome from "@/pages/NebworkHome";
+import NebworkLogin from "@/pages/NebworkLogin";
+import NebworkMyWorklogs from "@/pages/NebworkMyWorklogs";
+import NebworkNotFound from "@/pages/NebworkNotFound";
 
-const queryClient = new QueryClient();
+const RequireSession = ({ children }) => {
+  const token = sessionStorage.getItem("token");
+  return token ? children : <Navigate to="/login" replace />;
+};
+
+const RequireAdmin = ({ children }) => {
+  try {
+    const raw = sessionStorage.getItem("user");
+    const user = raw ? JSON.parse(raw) : null;
+    return user?.role === "admin" ? children : <Navigate to="/" replace />;
+  } catch (error) {
+    return <Navigate to="/" replace />;
+  }
+};
 
 const App = () => {
-  // Validate token on app load
-  useEffect(() => {
-    validateAndCleanupToken();
-  }, []);
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* PUBLIC ROUTES */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* PROTECTED ROUTES */}
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/chatbot" element={<ProtectedRoute><ChatBotPage /></ProtectedRoute>} />
-            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-            <Route path="/worklog" element={<ProtectedRoute><WorkLog /></ProtectedRoute>} />
-            <Route path="/worklogs/:id/versions" element={<ProtectedRoute><WorkLogVersion /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/blog-editor" element={<ProtectedRoute><BlogEditor /></ProtectedRoute>} />
-            <Route path="/blog-post" element={<ProtectedRoute><BlogPost /></ProtectedRoute>} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/new-password/:token" element={<NewPassword />} />
-            
-            {/* CATCH-ALL ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<NebworkLogin />} />
+        <Route path="/" element={<RequireSession><NebworkHome /></RequireSession>} />
+        <Route path="/my-worklogs" element={<RequireSession><NebworkMyWorklogs /></RequireSession>} />
+        <Route path="/worklog/new" element={<RequireSession><NebworkEditor /></RequireSession>} />
+        <Route path="/worklog/:id" element={<RequireSession><NebworkEditor /></RequireSession>} />
+        <Route path="/assistant" element={<RequireSession><NebworkAssistantChat /></RequireSession>} />
+        <Route path="/analytics" element={<RequireSession><NebworkAnalytics /></RequireSession>} />
+        <Route path="/admin" element={<RequireSession><RequireAdmin><NebworkAdmin /></RequireAdmin></RequireSession>} />
+        <Route path="*" element={<NebworkNotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
