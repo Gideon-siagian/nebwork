@@ -244,12 +244,15 @@ export function AppShell({ title, description, children, actions }) {
   }, [location.pathname]);
 
   const handleGlobalSearch = (event) => {
-    if (event.key !== "Enter") {
-      return;
-    }
+      if (event.key !== "Enter") {
+          return;
+      }
 
-    const query = globalSearch.trim();
-    navigate(query ? `/?search=${encodeURIComponent(query)}` : "/");
+      // Stop the browser from triggering a native page reload
+      event.preventDefault();
+
+      const query = globalSearch.trim();
+      navigate(query ? `/?search=${encodeURIComponent(query)}` : "/");
   };
 
   const handleNotificationAction = async (notificationId, action) => {

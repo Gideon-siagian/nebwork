@@ -393,18 +393,20 @@ export default function NebworkEditor() {
       title="Worklog"
       description={feedback || "Tulis, simpan draft, invite collaborator, lalu publish dari editor yang sama."}
       actions={
-        <>
-          <Button variant="outline" className="rounded-2xl" onClick={() => saveWorklog("draft")} disabled={isSaving || !access.canEdit}>
-            Save draft
-          </Button>
-          <Button
-            disabled={isSaving || !access.canEdit}
-            onClick={() => saveWorklog("published")}
-            className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]"
-          >
-            Publish
-          </Button>
-        </>
+        status !== "published" && (
+            <>
+                <Button variant="outline" className="rounded-2xl" onClick={() => saveWorklog("draft")} disabled={isSaving || !access.canEdit}>
+                    Save draft
+                </Button>
+                <Button
+                    disabled={isSaving || !access.canEdit}
+                    onClick={() => saveWorklog("published")}
+                    className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]"
+                >
+                    Publish
+                </Button>
+            </>
+          )
       }
     >
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
