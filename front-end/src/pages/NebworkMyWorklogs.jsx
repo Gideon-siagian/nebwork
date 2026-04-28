@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileText, Filter, Plus, Search, Users2 } from "lucide-react";
+import { Trash2 ,FileText, Filter, Plus, Search, Users2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { WORKLOG_ENDPOINTS } from "@/config/api";
@@ -138,6 +138,24 @@ export default function NebworkMyWorklogs() {
     });
   }, [activeFilter, worklogs]);
 
+    const handleDeleteWorklog = async (worklog) => {
+        if (!window.confirm(`Delete "${worklog.title}"? This cannot be undone.`)) return;
+
+        const token = sessionStorage.getItem("token");
+        try {
+            const response = await fetch(WORKLOG_ENDPOINTS.ONE(worklog.id), {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await response.json();
+            if (!response.ok)
+                throw new Error(data.message || "Failed to delete worklog");
+            setWorklogs((current) => current.filter((w) => w.id !== worklog.id));
+        } catch (deleteError) {
+            setError(deleteError.message || "Failed to delete worklog");
+        }
+    };
+
   return (
     <AppShell
       title="My Worklogs"
@@ -248,12 +266,16 @@ export default function NebworkMyWorklogs() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button asChild variant="outline" className="rounded-2xl">
-                      <Link to={`/worklog/${item.id}`}>Open</Link>
-                    </Button>
-                    <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
-                      <Link to={`/worklog/${item.id}`}>Continue editing</Link>
-                    </Button>
+                      <Button asChild variant="outline" className="rounded-2xl">
+                          <Link to={`/worklog/${item.id}`}>Open</Link>
+                      </Button>
+                      <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
+                          <Link to={`/worklog/${item.id}`}>Continue editing</Link>
+                      </Button>
+                      <Button variant="outline" className="rounded-2xl text-red-600" onClick={() => handleDeleteWorklog(item)}>
+                          <Trash2 className="h-4 w-4" />
+                          Delete
+                      </Button>
                   </div>
                 </div>
 
