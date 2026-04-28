@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BarChart3, LogOut, PencilLine, RefreshCw, Search, ShieldCheck, Sparkles, Trash2, UserPlus, Users2 } from "lucide-react";
+import { ArrowLeft, BarChart3, LogOut, PencilLine, RefreshCw, Search, ShieldCheck, Sparkles, Trash2, UserPlus, Users2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { ADMIN_ENDPOINTS, AUTH_ENDPOINTS } from "@/config/api";
@@ -367,9 +367,10 @@ export default function NebworkAdmin() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="rounded-full px-3 py-1 text-xs">
-                {sessionUser?.email || "Admin session"}
-              </Badge>
+              <Button variant="outline" className="rounded-2xl" onClick={() => navigate("/")}>
+                <ArrowLeft className="h-4 w-4" />
+                  Back
+              </Button>
               <Button variant="outline" className="rounded-2xl" onClick={() => fetchAdminData(searchValue)}>
                 <RefreshCw className="h-4 w-4" />
                 Refresh
