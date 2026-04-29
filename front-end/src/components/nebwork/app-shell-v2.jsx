@@ -1,4 +1,4 @@
-import { Bell, BrainCircuit, ChartSpline, ChevronUp, FilePlus2, Files, House, LogOut, Menu, Search, Sparkles, UserCheck, Users } from "lucide-react";
+import { Bell, BrainCircuit, ChevronUp, FilePlus2, Files, House, LogOut, Menu, Search, Sparkles, UserCheck, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -32,7 +32,6 @@ const baseNavigation = [
   { label: "My Worklogs", href: "/my-worklogs", icon: Files },
   { label: "Worklog", href: "/worklog/new", icon: FilePlus2 },
   { label: "AI Assistant", href: "/assistant", icon: BrainCircuit },
-  { label: "Analytics", href: "/analytics", icon: ChartSpline },
 ];
 
 const buildNavigation = (user) => (
@@ -189,6 +188,7 @@ export function AppShell({ title, description, children, actions }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationError, setNotificationError] = useState("");
   const [isNotificationsLoading, setIsNotificationsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -372,7 +372,9 @@ export function AppShell({ title, description, children, actions }) {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(15,23,42,0.08),_transparent_26%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.12),_transparent_24%),linear-gradient(180deg,#ffffff_0%,#f8fafc_44%,#eef4ff_100%)] text-foreground">
       <div className="mx-auto flex min-h-screen max-w-[1600px]">
-        <aside className="sticky top-0 hidden h-screen w-[290px] shrink-0 self-start lg:block">
+        <aside className={`sticky top-0 h-screen w-[290px] shrink-0 self-start transition-all duration-300 ${
+          sidebarOpen ? "lg:block" : "lg:hidden"
+        } hidden`}>
           <SidebarContent />
         </aside>
 
@@ -381,6 +383,15 @@ export function AppShell({ title, description, children, actions }) {
             <div className="flex flex-col gap-4 px-4 py-4 sm:px-6 lg:px-10">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    className="hidden lg:inline-flex"
+                  >
+                    <Menu className="h-4 w-4" />
+                  </Button>
+
                   <Sheet>
                     <SheetTrigger asChild>
                       <Button variant="outline" size="icon" className="lg:hidden">

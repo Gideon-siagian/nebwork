@@ -191,7 +191,7 @@ export default function NebworkHome() {
       }
     >
       <div className="space-y-6">
-        <Card className="sticky top-[118px] z-20 border-white/60 bg-white/88 shadow-sm">
+        <Card className="relative z-20 border-white/60 bg-white/88 shadow-sm">
           <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 items-center gap-3 rounded-2xl border border-border/60 bg-white px-4 py-3">
               <Sparkles className="h-4 w-4 text-[#2563eb]" />

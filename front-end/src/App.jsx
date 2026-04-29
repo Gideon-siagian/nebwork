@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import NebworkAnalytics from "@/pages/NebworkAnalytics";
 import NebworkAdmin from "@/pages/NebworkAdmin";
 import NebworkAssistantChat from "@/pages/NebworkAssistantChat";
 import NebworkEditor from "@/pages/NebworkEditor";
@@ -37,7 +36,6 @@ const App = () => {
         <Route path="/worklog/new" element={<RequireSession><NebworkEditor /></RequireSession>} />
         <Route path="/worklog/:id" element={<RequireSession><NebworkEditor /></RequireSession>} />
         <Route path="/assistant" element={<RequireSession><NebworkAssistantChat /></RequireSession>} />
-        <Route path="/analytics" element={<RequireSession><NebworkAnalytics /></RequireSession>} />
         <Route path="/profile" element={<RequireSession><NebworkProfile /></RequireSession>} />
         <Route path="/admin" element={<RequireSession><RequireAdmin><NebworkAdmin /></RequireAdmin></RequireSession>} />
         <Route path="*" element={<NebworkNotFound />} />

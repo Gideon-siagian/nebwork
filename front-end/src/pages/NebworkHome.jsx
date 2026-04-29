@@ -245,17 +245,7 @@ export default function NebworkHome() {
     >
       <div className="space-y-6">
         <Card className="sticky top-[118px] z-20 border-border/70 bg-white shadow-[0_12px_40px_-28px_rgba(15,23,42,0.25)]">
-          <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-1 items-center gap-3 rounded-2xl border border-border/60 bg-white px-4 py-3">
-              <Sparkles className="h-4 w-4 text-[#2563eb]" />
-              <Input
-                value={searchValue}
-                onChange={(event) => setSearchValue(event.target.value)}
-                className="h-auto border-none bg-transparent p-0 shadow-none focus-visible:ring-0"
-                placeholder="Search worklogs, tags, or relevant authors..."
-              />
-            </div>
-
+          <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-end">
             <div className="flex flex-wrap items-center gap-2">
               {FEED_BUCKETS.map((bucket) => (
                 <Button

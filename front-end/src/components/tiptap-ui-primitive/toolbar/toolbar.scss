@@ -1,6 +1,6 @@
 :root {
   --tt-toolbar-height: 2.75rem;
-  --tt-navbar-height: 6.5rem;
+  --tt-navbar-height: auto;
   --tt-safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --tt-toolbar-bg-color: var(--white);
   --tt-toolbar-border-color: var(--tt-gray-light-a-100);
@@ -32,9 +32,9 @@
   }
 
   &[data-variant="fixed"] {
-    position: relative;
-    top: auto;
-    z-index: 1;
+    position: sticky;
+    top: 5.5rem;
+    z-index: 40;
     width: 100%;
     min-height: var(--tt-toolbar-height);
     background: var(--tt-toolbar-bg-color);
