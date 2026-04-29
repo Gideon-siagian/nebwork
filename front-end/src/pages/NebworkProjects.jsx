@@ -22,7 +22,7 @@ export default function NebworkProjects() {
   return (
     <AppShell
       title="Collaboration workspace"
-      description="Project worklog dengan multi-contributor, task tracking ringan, presence, dan dokumentasi real-time."
+      description="Project worklog with multi-contributors, lightweight task tracking, presence, and real-time documentation."
       actions={<Button className="rounded-2xl bg-[#0f766e] hover:bg-[#0c5d57]">New project worklog</Button>}
     >
       <div className="space-y-6">
@@ -60,8 +60,7 @@ export default function NebworkProjects() {
                 </div>
                 <Progress value={projectOverview.progress} className="mt-4 h-2.5 bg-white/10" indicatorClassName="bg-[#ffd4a8]" />
                 <p className="mt-4 text-sm leading-6 text-white/80">
-                  OT/CRDT-ready collaboration disimulasikan lewat presence, section ownership, dan activity stream yang
-                  terhubung ke setiap task.
+                  OT/CRDT-ready collaboration simulated through presence, section ownership, and activity streams linked to each task.
                 </p>
               </div>
             </div>
@@ -101,7 +100,7 @@ export default function NebworkProjects() {
                   <CalendarRange className="h-5 w-5 text-[#0f766e]" />
                   Milestones timeline
                 </CardTitle>
-                <CardDescription>Gantt-style view bisa ditambahkan nanti, saat ini milestone ringkas sudah cukup untuk MVP.</CardDescription>
+                <CardDescription>Gantt-style view can be added later; currently, concise milestones are sufficient for the MVP.</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {projectMilestones.map((milestone) => (
@@ -124,7 +123,7 @@ export default function NebworkProjects() {
                   <Users className="h-5 w-5 text-[#0f766e]" />
                   Team presence
                 </CardTitle>
-                <CardDescription>Siapa yang sedang melihat atau mengedit project worklog.</CardDescription>
+                <CardDescription>Who is currently viewing or editing the project worklog.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {projectMembers.map((member) => (
@@ -150,7 +149,7 @@ export default function NebworkProjects() {
                   <Activity className="h-5 w-5 text-[#e76f51]" />
                   Activity feed
                 </CardTitle>
-                <CardDescription>Perubahan penting yang terjadi tanpa perlu refresh halaman.</CardDescription>
+                <CardDescription>Important changes happening without needing to refresh the page.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {projectActivity.map((item) => (
@@ -167,11 +166,11 @@ export default function NebworkProjects() {
                   <FolderKanban className="h-5 w-5 text-[#0f766e]" />
                   Invite collaborators
                 </CardTitle>
-                <CardDescription>Tambahkan orang lain ke project worklog dan tentukan peran mereka.</CardDescription>
+                <CardDescription>Add others to the project worklog and define their roles.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-slate-700">
                 <Input
-                  placeholder="Masukkan email, username, atau nama team"
+                  placeholder="Enter email, username, or team name"
                   defaultValue="finance-ops-payroll@nebwork.id"
                   className="h-11 rounded-2xl bg-white"
                 />

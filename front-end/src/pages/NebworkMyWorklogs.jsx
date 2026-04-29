@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Trash2 ,FileText, Filter, Plus, Search, Users2 } from "lucide-react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { Trash2, FileText, Filter, Plus, Search, Users2, Calendar as CalendarIcon, Tags, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { WORKLOG_ENDPOINTS } from "@/config/api";
@@ -8,6 +8,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 const FILTERS = ["All", "Published", "Draft", "Collaborative"];
 
@@ -25,7 +36,7 @@ const formatPrivacyLabel = (privacyLevel) => {
 const formatUpdatedAt = (dateValue) => {
   if (!dateValue) return "Recently updated";
 
-  return new Intl.DateTimeFormat("id-ID", {
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -43,6 +54,20 @@ export default function NebworkMyWorklogs() {
   const [worklogs, setWorklogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const isInitialMount = useRef(true);
+
+  // Advanced Filter States
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [tempFilters, setTempFilters] = useState({
+    dateFrom: "",
+    dateTo: "",
+    tags: "",
+  });
+  const [appliedFilters, setAppliedFilters] = useState({
+    dateFrom: "",
+    dateTo: "",
+    tags: "",
+  });
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -52,7 +77,8 @@ export default function NebworkMyWorklogs() {
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(async () => {
+    
+    const performFetch = async () => {
       setIsLoading(true);
       setError("");
 
@@ -62,22 +88,20 @@ export default function NebworkMyWorklogs() {
           limit: "50",
         });
 
-        if (searchValue.trim()) {
-          params.set("search", searchValue.trim());
-        }
+        if (searchValue.trim()) params.set("search", searchValue.trim());
+        
+        // Apply Advanced Filters
+        if (appliedFilters.dateFrom) params.set("from", appliedFilters.dateFrom);
+        if (appliedFilters.dateTo) params.set("to", appliedFilters.dateTo);
+        if (appliedFilters.tags) params.set("tag", appliedFilters.tags);
 
         const response = await fetch(`${WORKLOG_ENDPOINTS.LIST}?${params.toString()}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           signal: controller.signal,
         });
 
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to load worklogs");
-        }
+        if (!response.ok) throw new Error(data.message || "Failed to load worklogs");
 
         setWorklogs(data.worklogs || []);
       } catch (fetchError) {
@@ -89,13 +113,21 @@ export default function NebworkMyWorklogs() {
           setIsLoading(false);
         }
       }
-    }, 250);
-
-    return () => {
-      controller.abort();
-      clearTimeout(timeout);
     };
-  }, [navigate, searchValue]);
+
+    if (isInitialMount.current) {
+      performFetch();
+      isInitialMount.current = false;
+    } else {
+      const timeout = setTimeout(performFetch, 400);
+      return () => {
+        controller.abort();
+        clearTimeout(timeout);
+      };
+    }
+
+    return () => controller.abort();
+  }, [navigate, searchValue, appliedFilters]);
 
   const stats = useMemo(() => {
     const total = worklogs.length;
@@ -104,67 +136,62 @@ export default function NebworkMyWorklogs() {
     const collaborative = worklogs.filter((worklog) => (worklog.collaboratorDetails || []).length > 0).length;
 
     return [
-      {
-        label: "Total worklogs",
-        value: total,
-        detail: "Semua dokumen kerja yang Anda buat atau miliki.",
-      },
-      {
-        label: "Published",
-        value: published,
-        detail: "Dokumen yang sudah tampil di knowledge feed tim.",
-      },
-      {
-        label: "Drafts",
-        value: draft,
-        detail: "Worklog yang masih bisa Anda lanjutkan sebelum publish.",
-      },
-      {
-        label: "Collaborative",
-        value: collaborative,
-        detail: "Worklog yang saat ini dikerjakan bersama collaborator lain.",
-      },
+      { label: "Total worklogs", value: total, detail: "All work documents you've created." },
+      { label: "Published", value: published, detail: "Appearing in the team's feed." },
+      { label: "Drafts", value: draft, detail: "Ongoing documents not yet published." },
+      { label: "Collaborative", value: collaborative, detail: "Worked on with other teammates." },
     ];
   }, [worklogs]);
 
   const visibleWorklogs = useMemo(() => {
     return worklogs.filter((worklog) => {
       if (activeFilter === "All") return true;
-      if (activeFilter === "Collaborative") {
-        return (worklog.collaboratorDetails || []).length > 0;
-      }
-
+      if (activeFilter === "Collaborative") return (worklog.collaboratorDetails || []).length > 0;
       return formatStatusLabel(worklog.status) === activeFilter;
     });
   }, [activeFilter, worklogs]);
 
-    const handleDeleteWorklog = async (worklog) => {
-        if (!window.confirm(`Delete "${worklog.title}"? This cannot be undone.`)) return;
+  const handleDeleteWorklog = async (worklog) => {
+    if (!window.confirm(`Delete "${worklog.title}"? This cannot be undone.`)) return;
 
-        const token = sessionStorage.getItem("token");
-        try {
-            const response = await fetch(WORKLOG_ENDPOINTS.ONE(worklog.id), {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data = await response.json();
-            if (!response.ok)
-                throw new Error(data.message || "Failed to delete worklog");
-            setWorklogs((current) => current.filter((w) => w.id !== worklog.id));
-        } catch (deleteError) {
-            setError(deleteError.message || "Failed to delete worklog");
-        }
-    };
+    const token = sessionStorage.getItem("token");
+    try {
+      const response = await fetch(WORKLOG_ENDPOINTS.ONE(worklog.id), {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Failed to delete worklog");
+      }
+      setWorklogs((current) => current.filter((w) => w.id !== worklog.id));
+    } catch (deleteError) {
+      setError(deleteError.message || "Failed to delete worklog");
+    }
+  };
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(tempFilters);
+    setIsFilterOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    const reset = { dateFrom: "", dateTo: "", tags: "" };
+    setTempFilters(reset);
+    setAppliedFilters(reset);
+    setIsFilterOpen(false);
+  };
+
+  const activeFiltersCount = Object.values(appliedFilters).filter(Boolean).length;
 
   return (
     <AppShell
       title="My Worklogs"
-      description="Wadah untuk semua worklog yang pernah Anda buat, dari draft sampai dokumen kolaboratif yang sudah publish."
+      description="Manage your drafts, published worklogs, and collaborative documents."
       actions={
-        <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
+        <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)]">
           <Link to="/worklog/new">
-            <Plus className="h-4 w-4" />
-            Create worklog
+            <Plus className="mr-2 h-4 w-4" /> Create worklog
           </Link>
         </Button>
       }
@@ -175,7 +202,9 @@ export default function NebworkMyWorklogs() {
             <Card key={item.label} className="bg-white/[0.88]">
               <CardHeader className="pb-3">
                 <CardDescription>{item.label}</CardDescription>
-                <CardTitle className="text-3xl text-slate-900">{item.value}</CardTitle>
+                <CardTitle className="text-3xl text-slate-900">
+                  {isLoading ? <Skeleton className="h-8 w-12" /> : item.value}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600">{item.detail}</p>
@@ -192,7 +221,7 @@ export default function NebworkMyWorklogs() {
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.target.value)}
                 className="h-11 w-full rounded-2xl border-border/70 bg-white pl-9"
-                placeholder="Cari judul worklog, tag, atau project..."
+                placeholder="Search worklog title, tag, or project..."
               />
             </div>
 
@@ -202,129 +231,144 @@ export default function NebworkMyWorklogs() {
                   key={filter}
                   size="sm"
                   variant={filter === activeFilter ? "default" : "outline"}
-                  className={filter === activeFilter ? "rounded-full bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]" : "rounded-full"}
+                  className={filter === activeFilter ? "rounded-full bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)]" : "rounded-full"}
                   onClick={() => setActiveFilter(filter)}
                 >
                   {filter}
                 </Button>
               ))}
-              <Button size="sm" variant="ghost" className="rounded-full">
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
+              
+              <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant={activeFiltersCount > 0 ? "secondary" : "ghost"} className="rounded-full relative">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filters
+                    {activeFiltersCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white">
+                        {activeFiltersCount}
+                      </span>
+                    )}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] rounded-[24px]">
+                  <DialogHeader>
+                    <DialogTitle>Filter Worklogs</DialogTitle>
+                    <DialogDescription>Apply specific filters to find exactly what you're looking for.</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-6 py-4">
+                    <div className="grid gap-2">
+                      <Label className="flex items-center gap-2">
+                        <CalendarIcon className="h-4 w-4 text-blue-500" /> Date Range
+                      </Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input 
+                          type="date" 
+                          value={tempFilters.dateFrom} 
+                          onChange={(e) => setTempFilters(p => ({ ...p, dateFrom: e.target.value }))}
+                          className="rounded-xl"
+                        />
+                        <Input 
+                          type="date" 
+                          value={tempFilters.dateTo} 
+                          onChange={(e) => setTempFilters(p => ({ ...p, dateTo: e.target.value }))}
+                          className="rounded-xl"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="flex items-center gap-2">
+                        <Tags className="h-4 w-4 text-teal-500" /> Filter by Tags
+                      </Label>
+                      <Input 
+                        placeholder="e.g. #handover, #onboarding" 
+                        value={tempFilters.tags}
+                        onChange={(e) => setTempFilters(p => ({ ...p, tags: e.target.value }))}
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter className="flex justify-between sm:justify-between">
+                    <Button variant="ghost" onClick={handleResetFilters} className="rounded-xl">Reset</Button>
+                    <Button onClick={handleApplyFilters} className="rounded-xl bg-blue-600">Apply Filters</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
 
-        {error ? (
-          <Card className="border-red-200 bg-red-50">
-            <CardContent className="p-5 text-sm text-red-700">{error}</CardContent>
-          </Card>
-        ) : null}
-
-        {isLoading ? (
-          <Card className="bg-white/[0.9]">
-            <CardContent className="p-6 text-sm text-slate-500">Loading your worklogs...</CardContent>
-          </Card>
-        ) : null}
-
-        {!isLoading && visibleWorklogs.length === 0 ? (
-          <Card className="bg-white/[0.9]">
-            <CardContent className="flex flex-col items-center justify-center gap-3 p-10 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#eff6ff] text-[#2563eb]">
-                <FileText className="h-6 w-6" />
-              </div>
-              <div className="space-y-1">
-                <p className="font-display text-2xl text-slate-900">Belum ada worklog di tampilan ini</p>
-                <p className="text-sm text-slate-500">
-                  Mulai dokumen baru atau ubah filter untuk melihat draft dan worklog yang sudah Anda publish.
-                </p>
-              </div>
-              <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
-                <Link to="/worklog/new">Create your first worklog</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ) : null}
+        {activeFiltersCount > 0 && (
+          <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-1">
+            {appliedFilters.dateFrom && (
+              <Badge variant="secondary" className="rounded-full px-3 py-1 bg-blue-50 text-blue-700 border-blue-100">
+                From: {appliedFilters.dateFrom}
+                <X className="ml-2 h-3 w-3 cursor-pointer" onClick={() => setAppliedFilters(p => ({ ...p, dateFrom: "" }))} />
+              </Badge>
+            )}
+            {appliedFilters.dateTo && (
+              <Badge variant="secondary" className="rounded-full px-3 py-1 bg-blue-50 text-blue-700 border-blue-100">
+                To: {appliedFilters.dateTo}
+                <X className="ml-2 h-3 w-3 cursor-pointer" onClick={() => setAppliedFilters(p => ({ ...p, dateTo: "" }))} />
+              </Badge>
+            )}
+            {appliedFilters.tags && (
+              <Badge variant="secondary" className="rounded-full px-3 py-1 bg-teal-50 text-teal-700 border-teal-100">
+                Tags: {appliedFilters.tags}
+                <X className="ml-2 h-3 w-3 cursor-pointer" onClick={() => setAppliedFilters(p => ({ ...p, tags: "" }))} />
+              </Badge>
+            )}
+          </div>
+        )}
 
         <div className="grid gap-5">
-          {visibleWorklogs.map((item) => (
-            <Card key={item.id} className="bg-white/[0.9]">
-              <CardContent className="space-y-5 p-6">
-                <div className="flex flex-wrap items-start justify-between gap-4">
+          {isLoading ? (
+            [1, 2, 3].map((i) => (
+              <Card key={i} className="bg-white/[0.9]">
+                <CardContent className="space-y-4 p-6">
                   <div className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant={item.status === "published" ? "secondary" : "outline"}>
-                        {formatStatusLabel(item.status)}
-                      </Badge>
-                      <Badge variant="outline">{formatPrivacyLabel(item.privacyLevel)}</Badge>
-                    </div>
-                    <h2 className="font-display text-2xl text-slate-900">{item.title}</h2>
-                    <p className="text-sm text-slate-500">
-                      {(item.project || "No project yet")} - {formatUpdatedAt(item.updatedAt)}
-                    </p>
+                    <Skeleton className="h-4 w-24" /><Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-48" />
                   </div>
-
-                  <div className="flex gap-2">
-                      <Button asChild variant="outline" className="rounded-2xl">
-                          <Link to={`/worklog/${item.id}`}>Open</Link>
-                      </Button>
-                      <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
-                          <Link to={`/worklog/${item.id}`}>Continue editing</Link>
-                      </Button>
-                      <Button variant="outline" className="rounded-2xl text-red-600" onClick={() => handleDeleteWorklog(item)}>
-                          <Trash2 className="h-4 w-4" />
-                          Delete
-                      </Button>
-                  </div>
+                  <Skeleton className="h-16 w-full" />
+                </CardContent>
+              </Card>
+            ))
+          ) : visibleWorklogs.length === 0 ? (
+            <Card className="bg-white/[0.9]">
+              <CardContent className="flex flex-col items-center justify-center gap-3 p-10 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#eff6ff] text-[#2563eb]">
+                  <FileText className="h-6 w-6" />
                 </div>
-
-                <p className="max-w-4xl text-sm leading-7 text-slate-600">
-                  {item.excerpt || "Belum ada ringkasan konten untuk worklog ini."}
-                </p>
-
-                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
-                  <div className="flex flex-wrap gap-2">
-                    {(item.tag || []).map((tag) => (
-                      <Badge key={`${item.id}-${tag}`} variant="soft">{withHash(tag)}</Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <Users2 className="h-4 w-4" />
-                    {(item.collaboratorDetails || []).length ? (
-                      <span>
-                        {`Collaborators: ${item.collaboratorDetails.map((collaborator) => collaborator.name).join(", ")}`}
-                      </span>
-                    ) : (
-                      <span>Solo worklog</span>
-                    )}
-                  </div>
-                </div>
+                <p className="font-display text-2xl text-slate-900">No worklogs found</p>
+                <p className="text-sm text-slate-500">Try changing your search or filters.</p>
               </CardContent>
             </Card>
-          ))}
+          ) : (
+            visibleWorklogs.map((item) => (
+              <Card key={item.id} className="bg-white/[0.9]">
+                <CardContent className="space-y-5 p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={item.status === "published" ? "secondary" : "outline"}>{formatStatusLabel(item.status)}</Badge>
+                        <Badge variant="outline">{formatPrivacyLabel(item.privacyLevel)}</Badge>
+                      </div>
+                      <h2 className="font-display text-2xl text-slate-900">{item.title}</h2>
+                      <p className="text-sm text-slate-500">{(item.project || "No project")} - {formatUpdatedAt(item.updatedAt)}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button asChild variant="outline" className="rounded-2xl"><Link to={`/worklog/${item.id}`}>Open</Link></Button>
+                      <Button variant="outline" className="rounded-2xl text-red-600" onClick={() => handleDeleteWorklog(item)}><Trash2 className="h-4 w-4" /></Button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-600">{item.excerpt || "No summary available."}</p>
+                  <div className="flex flex-wrap gap-2 pt-4 border-t border-border/60">
+                    {(item.tag || []).map((t) => <Badge key={t} variant="soft">{withHash(t)}</Badge>)}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
-
-        <Card className="bg-white/[0.88]">
-          <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eff6ff] text-[#2563eb]">
-                <FileText className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-display text-xl text-slate-900">Semua worklog tersimpan di sini</p>
-                <p className="text-sm text-slate-500">
-                  Draft pribadi, worklog yang sudah publish, dan dokumen kolaboratif sekarang tersambung langsung ke backend.
-                </p>
-              </div>
-            </div>
-
-            <Button asChild variant="outline" className="rounded-2xl">
-              <Link to="/worklog/new">Create another worklog</Link>
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </AppShell>
   );

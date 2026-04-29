@@ -25,7 +25,7 @@ const formatPrivacyLabel = (privacyLevel) => {
 const formatUpdatedAt = (dateValue) => {
   if (!dateValue) return "Recently updated";
 
-  return new Intl.DateTimeFormat("id-ID", {
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -107,22 +107,22 @@ export default function NebworkMyWorklogs() {
       {
         label: "Total worklogs",
         value: total,
-        detail: "Semua dokumen kerja yang Anda buat atau miliki.",
+        detail: "All work documents you've created or own.",
       },
       {
         label: "Published",
         value: published,
-        detail: "Dokumen yang sudah tampil di knowledge feed tim.",
+        detail: "Documents already appearing in the team's knowledge feed.",
       },
       {
         label: "Drafts",
         value: draft,
-        detail: "Worklog yang masih bisa Anda lanjutkan sebelum publish.",
+        detail: "Worklogs you can still continue before publishing.",
       },
       {
         label: "Collaborative",
         value: collaborative,
-        detail: "Worklog yang saat ini dikerjakan bersama collaborator lain.",
+        detail: "Worklogs currently being worked on with other collaborators.",
       },
     ];
   }, [worklogs]);
@@ -141,7 +141,7 @@ export default function NebworkMyWorklogs() {
   return (
     <AppShell
       title="My Worklogs"
-      description="Wadah untuk semua worklog yang pernah Anda buat, dari draft sampai dokumen kolaboratif yang sudah publish."
+      description="A place for all the worklogs you've ever created, from drafts to published collaborative documents."
       actions={
         <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
           <Link to="/worklog/new">
@@ -174,7 +174,7 @@ export default function NebworkMyWorklogs() {
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.target.value)}
                 className="h-11 w-full rounded-2xl border-border/70 bg-white pl-9"
-                placeholder="Cari judul worklog, tag, atau project..."
+                placeholder="Search worklog title, tag, or project..."
               />
             </div>
 
@@ -217,9 +217,9 @@ export default function NebworkMyWorklogs() {
                 <FileText className="h-6 w-6" />
               </div>
               <div className="space-y-1">
-                <p className="font-display text-2xl text-slate-900">Belum ada worklog di tampilan ini</p>
+                <p className="font-display text-2xl text-slate-900">No worklogs found in this view</p>
                 <p className="text-sm text-slate-500">
-                  Mulai dokumen baru atau ubah filter untuk melihat draft dan worklog yang sudah Anda publish.
+                  Start a new document or change filters to see your drafts and published worklogs.
                 </p>
               </div>
               <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
@@ -258,7 +258,7 @@ export default function NebworkMyWorklogs() {
                 </div>
 
                 <p className="max-w-4xl text-sm leading-7 text-slate-600">
-                  {item.excerpt || "Belum ada ringkasan konten untuk worklog ini."}
+                  {item.excerpt || "No content summary for this worklog yet."}
                 </p>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
@@ -291,9 +291,9 @@ export default function NebworkMyWorklogs() {
                 <FileText className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-display text-xl text-slate-900">Semua worklog tersimpan di sini</p>
+                <p className="font-display text-xl text-slate-900">All worklogs are saved here</p>
                 <p className="text-sm text-slate-500">
-                  Draft pribadi, worklog yang sudah publish, dan dokumen kolaboratif sekarang tersambung langsung ke backend.
+                  Personal drafts, published worklogs, and collaborative documents are now connected directly to the backend.
                 </p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { Bot, Compass, Mic, PenSquare, Plus, Search, Send, Sparkles } from "lucide-react";
+import { Bot, BrainCircuit, Compass, MessageSquareText, Mic, PenSquare, Plus, Search, Send, ShieldCheck, Sparkles } from "lucide-react";
 
 import { AppShell } from "@/components/nebwork/app-shell-v2";
 import { Badge } from "@/components/ui/badge";
@@ -6,10 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
+  assistantExperts,
   assistantInlineCitations,
   assistantMessages,
   assistantPromptChips,
+  assistantSources,
+  assistantStats,
   assistantThreads,
+  knowledgeGaps,
 } from "@/data/nebwork-mock";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +21,7 @@ export default function NebworkAssistant() {
   return (
     <AppShell
       title="AI assistant"
-      description="RAG-powered assistant untuk menjawab pertanyaan, menemukan worklog relevan, dan menunjuk expert yang tepat."
+      description="RAG-powered assistant to answer questions, find relevant worklogs, and point to the right experts."
       actions={<Button className="rounded-2xl bg-[#0f766e] hover:bg-[#0c5d57]">Open answer history</Button>}
     >
       <div className="space-y-6">
@@ -42,7 +46,7 @@ export default function NebworkAssistant() {
                 <div>
                   <CardTitle className="text-2xl">Ask Nebwork AI</CardTitle>
                   <CardDescription>
-                    Jawaban selalu dibangun dari worklog dan komentar yang memang bisa diakses user.
+                    Answers are always built from worklogs and comments that the user is authorized to access.
                   </CardDescription>
                 </div>
               </div>
@@ -80,14 +84,14 @@ export default function NebworkAssistant() {
                   Confidence-aware answer
                 </div>
                 <p className="text-sm leading-6 text-slate-600">
-                  Jika confidence di bawah 50%, assistant akan menyarankan contact expert alih-alih memberi jawaban
-                  yang berpotensi salah. Semua query juga tercatat di audit log.
+                  If confidence is below 50%, the assistant will suggest contacting an expert instead of providing a
+                  potentially incorrect answer. All queries are recorded in the audit log.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 rounded-[28px] border border-border/60 bg-white p-4 sm:flex-row">
                 <Input
-                  defaultValue="Apa best practice untuk handover project payroll yang sedang aktif?"
+                  defaultValue="What are the best practices for an active payroll project handover?"
                   className="h-12 rounded-2xl border-border/60 bg-transparent"
                 />
                 <div className="flex gap-2">
@@ -110,7 +114,7 @@ export default function NebworkAssistant() {
                   <MessageSquareText className="h-5 w-5 text-[#0f766e]" />
                   Source-backed answers
                 </CardTitle>
-                <CardDescription>Combined view untuk jawaban AI dan worklog yang mendasarinya.</CardDescription>
+                <CardDescription>Combined view of the AI answer and its underlying worklogs.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {assistantSources.map((source) => (
@@ -132,7 +136,7 @@ export default function NebworkAssistant() {
             <Card className="bg-white/[0.85]">
               <CardHeader>
                 <CardTitle className="text-xl">Related people</CardTitle>
-                <CardDescription>Expert yang paling sering muncul di jawaban untuk konteks saat ini.</CardDescription>
+                <CardDescription>Experts who most frequently appear in answers for the current context.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {assistantExperts.map((person) => (
@@ -155,7 +159,7 @@ export default function NebworkAssistant() {
             <Card className="bg-white/[0.85]">
               <CardHeader>
                 <CardTitle className="text-xl">Knowledge gaps</CardTitle>
-                <CardDescription>Pertanyaan tanpa jawaban kuat yang perlu diprioritaskan tim.</CardDescription>
+                <CardDescription>Questions lacking strong answers that the team needs to prioritize.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {knowledgeGaps.map((gap) => (

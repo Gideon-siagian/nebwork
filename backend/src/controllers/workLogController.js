@@ -833,6 +833,7 @@ exports.filterWorkLogs = async (req, res) => {
 
     const [logs, totalDocs] = await Promise.all([
       WorkLog.find(query)
+        .select("-content -embedding")
         .populate("user", "name email division profile_photo join_date")
         .populate("collaborators", "name email division profile_photo")
         .populate("collaboratorMeta.user", "name email division profile_photo")

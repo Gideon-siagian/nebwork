@@ -26,6 +26,10 @@ const UserSchema = new mongoose.Schema({
   profile_photo:{
     type : String
   },
+  bio:{
+    type : String,
+    default: "Knowledge stays here. I am a contributor at Nebwork."
+  },
   join_date:{
     type : Date,
     default : Date.now

@@ -1,4 +1,4 @@
-import { Bell, BrainCircuit, ChartSpline, ChevronUp, FilePlus2, Files, House, LogOut, Menu, Search, Sparkles, Users } from "lucide-react";
+import { Bell, BrainCircuit, ChartSpline, ChevronUp, FilePlus2, Files, House, LogOut, Menu, Search, Sparkles, UserCheck, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -162,6 +162,13 @@ function SidebarContent() {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="rounded-xl px-3 py-2.5 text-sm text-slate-700"
+              onClick={() => navigate("/profile")}
+            >
+              <UserCheck className="mr-2 h-4 w-4" />
+              My Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="rounded-xl px-3 py-2.5 text-sm text-slate-700"
               onClick={handleLogout}
             >
               <LogOut className="mr-2 h-4 w-4" />
@@ -305,7 +312,7 @@ export function AppShell({ title, description, children, actions }) {
       <DropdownMenuContent align="end" className="w-[380px] rounded-2xl border-border/70 bg-white/95 p-0 backdrop-blur-xl">
         <div className="border-b border-border/60 px-4 py-3">
           <p className="text-sm font-semibold text-slate-900">Notifications</p>
-          <p className="text-xs text-slate-500">Invite collaborator, accept access, dan update terbaru worklog.</p>
+          <p className="text-xs text-slate-500">Collaborator invites, access acceptance, and the latest worklog updates.</p>
         </div>
         <div className="max-h-[420px] space-y-3 overflow-y-auto p-3">
           {notificationError ? (
@@ -322,7 +329,7 @@ export function AppShell({ title, description, children, actions }) {
 
           {!isNotificationsLoading && notifications.length === 0 ? (
             <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
-              Belum ada notification baru.
+              No new notifications.
             </div>
           ) : null}
 

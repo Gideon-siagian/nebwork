@@ -114,10 +114,10 @@ export default function NebworkAdmin() {
     const admins = employees.filter((employee) => employee.role === "admin").length;
 
     return [
-      { label: "Employees", value: total, detail: "Akun pekerja yang saat ini tersedia." },
-      { label: "Active", value: active, detail: "Akun yang bisa login dan memakai worklog." },
-      { label: "Blocked", value: blocked, detail: "Akun yang saat ini diblokir dari sistem." },
-      { label: "Admins", value: admins, detail: "Akun yang punya akses dashboard admin." },
+      { label: "Employees", value: total, detail: "Currently available employee accounts." },
+      { label: "Active", value: active, detail: "Accounts that can log in and use worklogs." },
+      { label: "Blocked", value: blocked, detail: "Accounts currently blocked from the system." },
+      { label: "Admins", value: admins, detail: "Accounts with admin dashboard access." },
     ];
   }, [employees]);
 
@@ -282,7 +282,7 @@ export default function NebworkAdmin() {
           <DialogHeader className="border-b border-border/60 px-6 py-5">
             <DialogTitle className="font-display text-2xl text-slate-900">Register employee account</DialogTitle>
             <DialogDescription>
-              Buat akun pekerja baru langsung dari dashboard admin.
+              Create new employee accounts directly from the admin dashboard.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 px-6 py-6">
@@ -319,7 +319,7 @@ export default function NebworkAdmin() {
           <DialogHeader className="border-b border-border/60 px-6 py-5">
             <DialogTitle className="font-display text-2xl text-slate-900">Edit employee account</DialogTitle>
             <DialogDescription>
-              Perbarui data akun tanpa mengubah worklog yang sudah dimiliki.
+              Update account data without changing existing worklogs.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 px-6 py-6">
@@ -361,7 +361,7 @@ export default function NebworkAdmin() {
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#2563eb]">Admin only</p>
                 <h1 className="font-display text-4xl leading-tight text-slate-900">Admin dashboard</h1>
                 <p className="max-w-3xl text-sm leading-7 text-slate-600">
-                  Kelola akun pekerja, role, status akses, dan pantau distribusi knowledge dari satu halaman khusus admin.
+                  Manage employee accounts, roles, access status, and monitor knowledge distribution from a dedicated admin page.
                 </p>
               </div>
             </div>
@@ -429,7 +429,7 @@ export default function NebworkAdmin() {
 
                 {!isLoading && employees.length === 0 ? (
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
-                    Belum ada akun yang cocok dengan pencarian ini.
+                    No accounts found matching this search.
                   </div>
                 ) : null}
 
@@ -477,12 +477,12 @@ export default function NebworkAdmin() {
                     <BarChart3 className="h-5 w-5 text-[#2563eb]" />
                     Division snapshot
                   </CardTitle>
-                  <CardDescription>Pembagian worklog aktif berdasarkan divisi yang ada di sistem.</CardDescription>
+                  <CardDescription>Active worklog distribution based on divisions in the system.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {divisionSnapshot.length === 0 ? (
                     <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
-                      Belum ada data divisi yang cukup.
+                      Insufficient division data.
                     </div>
                   ) : divisionSnapshot.map((item) => (
                     <div key={item.division} className="flex items-center justify-between rounded-2xl border border-border/60 bg-white px-4 py-3">
@@ -499,20 +499,20 @@ export default function NebworkAdmin() {
                     <Users2 className="h-5 w-5 text-[#2563eb]" />
                     Admin actions
                   </CardTitle>
-                  <CardDescription>Fitur inti yang layak tersedia untuk admin Nebwork.</CardDescription>
+                  <CardDescription>Core features available for Nebwork admins.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm leading-6 text-slate-600">
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3">
-                    Registrasi akun karyawan baru dengan domain Nebwork.
+                    Register new employee accounts with the Nebwork domain.
                   </div>
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3">
-                    Edit identitas akun, divisi, dan role admin atau user.
+                    Edit account identity, division, and admin or user roles.
                   </div>
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3">
-                    Block atau unblock akun tanpa menghapus data knowledge yang sudah tersimpan.
+                    Block or unblock accounts without deleting stored knowledge data.
                   </div>
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3">
-                    Pantau distribusi knowledge dan volume worklog per divisi.
+                    Monitor knowledge distribution and worklog volume per division.
                   </div>
                 </CardContent>
               </Card>

@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require("cors");
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const compression = require('compression');
 
 console.log('📚 Requiring Swagger...');
 const setupSwagger = require('./src/swagger/swagger');
@@ -22,6 +23,7 @@ const commentRoutes = require('./src/routes/commentRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 
 const app = express();
+app.use(compression());
 //believe this is needed for rate limiting to work correctly behind proxies (like DigitalOcean App Platform)
 app.set('trust proxy', 1);
 

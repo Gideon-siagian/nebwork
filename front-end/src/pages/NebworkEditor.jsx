@@ -391,7 +391,7 @@ export default function NebworkEditor() {
   return (
     <AppShell
       title="Worklog"
-      description={feedback || "Tulis, simpan draft, invite collaborator, lalu publish dari editor yang sama."}
+      description={feedback || "Write, save drafts, invite collaborators, then publish all from the same editor."}
       actions={
         status !== "published" && (
             <>
@@ -414,7 +414,7 @@ export default function NebworkEditor() {
           <DialogHeader className="border-b border-border/60 px-6 py-5">
             <DialogTitle className="font-display text-2xl text-slate-900">Worklog settings</DialogTitle>
             <DialogDescription>
-              Metadata utama untuk satu dokumen kerja individual atau shared.
+              Primary metadata for an individual or shared work document.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-5 px-6 py-6">
@@ -466,7 +466,7 @@ export default function NebworkEditor() {
                 }}
                 disabled={!access.canManageSettings}
                 className="h-11 rounded-2xl bg-white"
-                placeholder="Ringkas tujuan utama worklog ini"
+                placeholder="Summarize the main purpose of this worklog"
               />
             </div>
             <div className="space-y-2">
@@ -492,7 +492,7 @@ export default function NebworkEditor() {
             <div className="space-y-2">
               <p className="text-sm font-medium text-slate-900">Tags</p>
               <div className="flex flex-wrap gap-2">
-                {tags.length === 0 ? <Badge variant="outline">Belum ada tag</Badge> : null}
+                {tags.length === 0 ? <Badge variant="outline">No tags yet</Badge> : null}
                 {tags.map((tag) => (
                   <Badge key={tag} variant="soft">{withHash(tag)}</Badge>
                 ))}
@@ -519,7 +519,7 @@ export default function NebworkEditor() {
           <DialogHeader className="border-b border-border/60 px-6 py-5">
             <DialogTitle className="font-display text-2xl text-slate-900">Invite collaborator</DialogTitle>
             <DialogDescription>
-              Tambahkan karyawan lain melalui email Nebwork atau username Nebwork agar bisa mengakses worklog yang sama.
+              Add other employees via Nebwork email or username to access the same worklog.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-5 px-6 py-6">
@@ -566,7 +566,7 @@ export default function NebworkEditor() {
               <p className="text-sm font-medium text-slate-900">Collaborators</p>
               {(collaborators || []).length === 0 ? (
                 <div className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-500">
-                  Belum ada collaborator aktif pada worklog ini.
+                  No active collaborators on this worklog yet.
                 </div>
               ) : collaborators.map((person) => (
                 <div key={person.id} className="rounded-2xl bg-white px-4 py-3">
@@ -580,7 +580,7 @@ export default function NebworkEditor() {
               <p className="text-sm font-medium text-slate-900">Pending invites</p>
               {pendingInvites.length === 0 ? (
                 <div className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-500">
-                  Belum ada invite yang menunggu respons.
+                  No invites awaiting response yet.
                 </div>
               ) : pendingInvites.map((invite) => (
                 <div key={invite.id} className="rounded-2xl bg-white px-4 py-3">
@@ -600,13 +600,13 @@ export default function NebworkEditor() {
           <DialogHeader className="border-b border-border/60 px-6 py-5">
             <DialogTitle className="font-display text-2xl text-slate-900">Video meeting</DialogTitle>
             <DialogDescription>
-              Link meeting ini dibuat khusus untuk worklog yang sedang Anda edit.
+              This meeting link is created specifically for the worklog you are currently editing.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 px-6 py-6">
             <div className="rounded-2xl border border-border/60 bg-white p-4">
               <p className="text-sm font-medium text-slate-900">{meetingInfo?.roomName || "Meeting room"}</p>
-              <p className="mt-1 break-all text-sm text-slate-500">{meetingInfo?.url || "Belum ada link meeting."}</p>
+              <p className="mt-1 break-all text-sm text-slate-500">{meetingInfo?.url || "No meeting link available."}</p>
             </div>
             <div className="flex flex-wrap justify-end gap-2">
               <Button variant="outline" className="rounded-2xl" onClick={copyMeetingLink}>
@@ -634,7 +634,7 @@ export default function NebworkEditor() {
         {!isLoading && !access.canEdit ? (
           <Card className="border-amber-200 bg-amber-50">
             <CardContent className="p-5 text-sm text-amber-800">
-              Anda membuka worklog ini sebagai <span className="font-semibold">{access.role}</span>. Konten tetap bisa dibaca, tetapi perubahan hanya bisa dilakukan oleh owner atau collaborator dengan role editor.
+              You are viewing this worklog as <span className="font-semibold">{access.role}</span>. Content is readable, but changes can only be made by the owner or collaborators with the editor role.
             </CardContent>
           </Card>
         ) : null}
@@ -648,7 +648,7 @@ export default function NebworkEditor() {
                 </div>
                 <div>
                   <p className="font-display text-xl text-slate-900">Worklog actions</p>
-                  <p className="text-sm text-slate-500">Atur pengaturan dokumen dan kolaborator langsung dari sini.</p>
+                  <p className="text-sm text-slate-500">Manage document settings and collaborators directly from here.</p>
                 </div>
               </div>
 
@@ -670,7 +670,7 @@ export default function NebworkEditor() {
 
             <div className="flex flex-wrap items-center gap-3">
               {(collaborators || []).length === 0 ? (
-                <Badge variant="outline">Belum ada collaborator</Badge>
+                <Badge variant="outline">No collaborators yet</Badge>
               ) : collaborators.map((person) => (
                 <div key={person.id} className="flex items-center gap-2 rounded-full border border-border/60 bg-white px-3 py-2">
                   <Avatar className="h-7 w-7">

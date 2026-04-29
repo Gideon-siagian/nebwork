@@ -155,6 +155,7 @@ module.exports = {
           division: user.division,
           role: user.role,
           profilePicture: user.profile_photo,
+          bio: user.bio,
           dateOfJoin: user.join_date
         }
       });
@@ -171,12 +172,13 @@ module.exports = {
         return res.status(401).json({message: 'User not authenticated'});
       }
 
-      const { profilePicture } = req.body;
+      const { profilePicture, name, bio } = req.body;
       
       // Update only truly editable fields by user
-      // join_date, name, email, division are managed by admin only
       const updateData = {};
       if (profilePicture !== undefined) updateData.profile_photo = profilePicture;
+      if (name !== undefined) updateData.name = name;
+      if (bio !== undefined) updateData.bio = bio;
 
       const user = await User.findByIdAndUpdate(
         userId,
@@ -197,6 +199,7 @@ module.exports = {
           division: user.division,
           role: user.role,
           profilePicture: user.profile_photo,
+          bio: user.bio,
           dateOfJoin: user.join_date
         }
       });
@@ -245,6 +248,46 @@ module.exports = {
       res.status(200).json({message: 'Password reset successfully'});
     } catch (error) {
       return res.status(500).json({message: 'Failed to reset password', error: error.message});
+    }
+  },
+  changePassword: async (req, res) => {
+    // PUT /api/auth/change-password - Change password for logged in user
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?.id;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({message: 'Current and new password are required'});
+    }
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({message: 'User not found'});
+      }
+
+      // Verify current password
+      const isMatch = await user.matchPassword(currentPassword);
+      if (!isMatch) {
+        return res.status(401).json({message: 'Current password is incorrect'});
+      }
+
+      // Validate new password strength
+      const passwordValidation = validatePassword(newPassword);
+      if (!passwordValidation.isValid) {
+        return res.status(400).json({
+          status: 'error',
+          code: 'WEAK_PASSWORD',
+          message: passwordValidation.message
+        });
+      }
+
+      // Set new password - pre-hook in User.js will handle hashing
+      user.password = newPassword;
+      await user.save();
+
+      res.status(200).json({message: 'Password changed successfully'});
+    } catch (error) {
+      return res.status(500).json({message: 'Failed to change password', error: error.message});
     }
   },
 };

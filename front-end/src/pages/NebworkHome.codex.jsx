@@ -23,14 +23,14 @@ const getInitials = (name = "Nebwork") =>
     .toUpperCase();
 
 const relativeTime = (dateValue) => {
-  if (!dateValue) return "Baru saja";
+  if (!dateValue) return "Just now";
 
   const now = Date.now();
   const diffInMinutes = Math.max(1, Math.floor((now - new Date(dateValue).getTime()) / 60000));
 
-  if (diffInMinutes < 60) return `${diffInMinutes} menit lalu`;
-  if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} jam lalu`;
-  return `${Math.floor(diffInMinutes / 1440)} hari lalu`;
+  if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+  if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
+  return `${Math.floor(diffInMinutes / 1440)} days ago`;
 };
 
 const formatPrivacyLabel = (privacyLevel) => {
@@ -113,7 +113,7 @@ export default function NebworkHome() {
       privacy: formatPrivacyLabel(item.privacyLevel),
       publishedAgo: relativeTime(item.publishedAt || item.updatedAt || item.createdAt),
       title: item.title,
-      excerpt: item.summary || item.excerpt || "Belum ada ringkasan worklog.",
+      excerpt: item.summary || item.excerpt || "No worklog summary available.",
       tags: (item.tag || []).slice(0, 4).map(withHash),
       initials: getInitials(item.author?.name || "Nebwork"),
       author: item.author?.name || "Unknown author",
@@ -183,7 +183,7 @@ export default function NebworkHome() {
   return (
     <AppShell
       title="Knowledge feed"
-      description="Feed sosial untuk worklog terpublikasi, discovery cepat, dan transfer pengetahuan lintas tim."
+      description="Social feed for published worklogs, fast discovery, and cross-team knowledge transfer."
       actions={
         <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
           <Link to="/worklog/new">Create worklog</Link>
@@ -199,7 +199,7 @@ export default function NebworkHome() {
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.target.value)}
                 className="h-auto border-none bg-transparent p-0 shadow-none focus-visible:ring-0"
-                placeholder="Cari worklog, tag, atau author yang relevan..."
+                placeholder="Search worklogs, tags, or relevant authors..."
               />
             </div>
 
@@ -253,7 +253,7 @@ export default function NebworkHome() {
             {!isLoading && visibleFeed.length === 0 ? (
               <Card className="bg-white/[0.9]">
                 <CardContent className="p-6 text-sm text-slate-500">
-                  Belum ada worklog published yang cocok dengan pencarian ini.
+                  No published worklogs found for this search.
                 </CardContent>
               </Card>
             ) : null}
@@ -270,12 +270,12 @@ export default function NebworkHome() {
                   <Flame className="h-5 w-5 text-[#2563eb]" />
                   Trending topics
                 </CardTitle>
-                <CardDescription>Topik dengan engagement tertinggi dari worklog yang sudah terpublish.</CardDescription>
+                <CardDescription>Topics with the highest engagement from published worklogs.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {trendingTopics.length === 0 ? (
                   <div className="rounded-2xl bg-[#f8fafc] px-4 py-3 text-sm text-slate-500">
-                    Belum ada topic yang cukup data.
+                    Insufficient data for topics.
                   </div>
                 ) : trendingTopics.map((topic) => (
                   <div key={topic.label} className="flex items-center justify-between rounded-2xl bg-[#f8fafc] px-4 py-3">
@@ -292,12 +292,12 @@ export default function NebworkHome() {
                   <Users2 className="h-5 w-5 text-[#2563eb]" />
                   Top contributors
                 </CardTitle>
-                <CardDescription>Kontributor yang paling konsisten mendokumentasikan knowledge kritis.</CardDescription>
+                <CardDescription>Contributors who consistently document critical knowledge.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {topContributors.length === 0 ? (
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
-                    Belum ada contributor yang tampil di feed.
+                    No contributors shown in the feed yet.
                   </div>
                 ) : topContributors.map((person) => (
                   <div key={person.name} className="flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-white px-4 py-3">

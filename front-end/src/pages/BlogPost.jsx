@@ -212,7 +212,7 @@ const BlogPost = () => {
     } else if (diffDays < 8) {
       return `Last edited: ${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
     } else {
-      return `Last edited: ${edited.toLocaleDateString('id-ID', {
+      return `Last edited: ${edited.toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'long',
         year: 'numeric'
@@ -522,17 +522,17 @@ const BlogPost = () => {
                   </div>
                   <div className="text-right text-sm text-muted-foreground">
                     <p>
-                      {new Date(displayPost.datetime || displayPost.createdAt).toLocaleDateString('id-ID', {
+                      {new Date(displayPost.datetime || displayPost.createdAt).toLocaleDateString('en-US', {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric'
                       })}
                     </p>
                     <p>
-                      {new Date(displayPost.datetime || displayPost.createdAt).toLocaleTimeString('id-ID', {
+                      {new Date(displayPost.datetime || displayPost.createdAt).toLocaleTimeString('en-US', {
                         hour: '2-digit',
                         minute: '2-digit'
-                      })} WIB
+                      })}
                     </p>
                   </div>
                 </div>

@@ -23,11 +23,11 @@ export const worklogFeed = [
     bucket: "For You",
     title: "Handover payroll anomaly resolution for multi-bank transfers",
     excerpt:
-      "Ringkasan ini merapikan pola investigasi error payroll lintas bank, lengkap dengan root cause, fallback batch, dan siapa yang perlu dihubungi saat settlement tertunda.",
+      "Summarizes the multi-bank payroll error investigation pattern, including root causes, fallback batches, and contact persons for delayed settlements.",
     author: "Rani Siregar",
     role: "Senior Payroll Specialist",
     initials: "RS",
-    publishedAgo: "2 jam lalu",
+    publishedAgo: "2 hours ago",
     team: "Finance Ops",
     project: "Payroll Stabilization Q2",
     privacy: "Public",
@@ -38,13 +38,13 @@ export const worklogFeed = [
   {
     id: "wl-2",
     bucket: "For You",
-    title: "Setup environment project Atlas untuk engineer baru dalam 35 menit",
+    title: "Set up Atlas project environment for new engineers in 35 minutes",
     excerpt:
-      "Dokumen ini menggabungkan langkah setup lokal, akses VPN, seed data, dan checklist validasi supaya engineer baru bisa commit di hari pertama tanpa pair full day.",
+      "This document combines local setup steps, VPN access, seed data, and a validation checklist so new engineers can commit on their first day without full-day pairing.",
     author: "Fikri Mahendra",
     role: "Staff Backend Engineer",
     initials: "FM",
-    publishedAgo: "5 jam lalu",
+    publishedAgo: "5 hours ago",
     team: "Engineering",
     project: "Atlas Core API",
     privacy: "Team Only",
@@ -57,11 +57,11 @@ export const worklogFeed = [
     bucket: "Following",
     title: "Template meeting notes yang langsung berubah jadi action plan tim",
     excerpt:
-      "Format ini memisahkan decision log, owner, dan risiko lanjutan sehingga hasil meeting tidak hilang di chat. Cocok untuk sync lintas fungsi dan weekly project review.",
+      "This format separates decision logs, owners, and follow-up risks so meeting outcomes aren't lost in chat. Ideal for cross-functional syncs and weekly project reviews.",
     author: "Nadia Putri",
     role: "Program Manager",
     initials: "NP",
-    publishedAgo: "Kemarin",
+    publishedAgo: "Yesterday",
     team: "Operations",
     project: "Cross-Functional PMO",
     privacy: "Public",
@@ -74,11 +74,11 @@ export const worklogFeed = [
     bucket: "Trending",
     title: "Postmortem error 502 pada gateway vendor dan langkah recovery-nya",
     excerpt:
-      "Worklog ini mencatat sinyal awal, query utama, rollout fix, dan guardrail monitoring agar insiden serupa tidak terulang pada jam puncak transaksi.",
+      "This worklog records early signals, main queries, fix rollout, and monitoring guardrails to prevent similar incidents during peak transaction hours.",
     author: "Kevin Halim",
     role: "Site Reliability Engineer",
     initials: "KH",
-    publishedAgo: "3 hari lalu",
+    publishedAgo: "3 days ago",
     team: "Platform",
     project: "Vendor Gateway Reliability",
     privacy: "Public",
@@ -96,22 +96,22 @@ export const trendingTopics = [
 ];
 
 export const topContributors = [
-  { name: "Rani Siregar", role: "Finance Ops", initials: "RS", streak: "18 hari" },
-  { name: "Fikri Mahendra", role: "Engineering", initials: "FM", streak: "11 hari" },
-  { name: "Nadia Putri", role: "Program Management", initials: "NP", streak: "9 hari" },
+  { name: "Rani Siregar", role: "Finance Ops", initials: "RS", streak: "18 days" },
+  { name: "Fikri Mahendra", role: "Engineering", initials: "FM", streak: "11 days" },
+  { name: "Nadia Putri", role: "Program Management", initials: "NP", streak: "9 days" },
 ];
 
 export const spotlightNotifications = [
-  "3 engineer baru menyimpan worklog setup Atlas minggu ini",
-  "2 pertanyaan AI belum punya jawaban kuat di domain Finance Ops",
-  "Project Handover template dipakai 24 kali dalam 14 hari terakhir",
+  "3 new engineers saved Atlas setup worklogs this week",
+  "2 AI questions lack strong answers in the Finance Ops domain",
+  "Project Handover template used 24 times in the last 14 days",
 ];
 
 export const editorTemplates = [
-  { name: "Bug Fix Documentation", blurb: "Akar masalah, reproduksi, fix, dan guardrail pencegahan." },
-  { name: "Feature Implementation", blurb: "Context bisnis, arsitektur, decision log, dan rollout plan." },
-  { name: "Project Handover", blurb: "Status proyek, risiko terbuka, owner, dan next checkpoints." },
-  { name: "Onboarding Guide", blurb: "Langkah setup, akses yang diperlukan, dan FAQ cepat." },
+  { name: "Bug Fix Documentation", blurb: "Root cause, reproduction, fix, and prevention guardrails." },
+  { name: "Feature Implementation", blurb: "Business context, architecture, decision log, and rollout plan." },
+  { name: "Project Handover", blurb: "Project status, open risks, owner, and next checkpoints." },
+  { name: "Onboarding Guide", blurb: "Setup steps, required access, and quick FAQs." },
 ];
 
 export const editorToolbar = ["Heading", "Checklist", "Code Block", "Table", "Quote", "Attachment"];
@@ -130,31 +130,31 @@ export const editorSections = [
   {
     title: "1. Context",
     body:
-      "Tim Payroll menerima anomali transfer gaji di bank ketiga saat volume batch melewati 3.000 transaksi. Worklog ini dibuat untuk memastikan engineer atau ops baru bisa mengulang proses recovery tanpa harus menunggu author asli.",
+      "The Payroll team encountered a salary transfer anomaly at the third bank when batch volumes exceeded 3,000 transactions. This worklog ensures new engineers or ops can repeat the recovery process without waiting for the original author.",
   },
   {
     title: "2. Investigation path",
     body:
-      "Mulai dari dashboard reconciliation, cek mismatch settlement ID, lalu bandingkan file remittance dengan log callback vendor. Jika retry pertama gagal, pindah ke fallback batch dan eskalasi ke channel #finance-incident.",
+      "Start from the reconciliation dashboard, check for mismatch settlement IDs, then compare remittance files with vendor callback logs. If the first retry fails, switch to fallback batch and escalate to #finance-incident.",
   },
   {
     title: "3. Best practice",
     body:
-      "Simpan screenshot mismatch, catat timestamp bank cut-off, dan update status worklog setelah fix agar AI Assistant bisa memakai konteks terbaru untuk onboarding orang berikutnya.",
+      "Save mismatch screenshots, record bank cut-off timestamps, and update the worklog status after the fix so the AI Assistant can use the latest context for the next hire's onboarding.",
   },
 ];
 
 export const editorChecklist = [
-  "Tambahkan metadata project dan privacy level",
-  "Lampirkan screenshot dashboard atau query utama",
-  "Isi summary 2-3 kalimat untuk AI retrieval",
-  "Tag expert atau reviewer sebelum publish",
+  "Add project metadata and privacy level",
+  "Attach dashboard screenshots or main queries",
+  "Fill in a 2-3 sentence summary for AI retrieval",
+  "Tag an expert or reviewer before publishing",
 ];
 
 export const editorSuggestions = [
-  "AI menyarankan tag: Finance Ops, Troubleshooting, Handover, Payroll",
-  "Ditemukan 2 worklog serupa, pertimbangkan tautkan sebagai referensi tambahan",
-  "Summary otomatis: Dokumentasi recovery payroll lintas bank untuk volume batch tinggi",
+  "AI suggests tags: Finance Ops, Troubleshooting, Handover, Payroll",
+  "Found 2 similar worklogs, consider linking them as additional references",
+  "Auto-summary: Multi-bank payroll recovery documentation for high batch volumes",
 ];
 
 export const docOutline = [
@@ -167,9 +167,9 @@ export const docOutline = [
 ];
 
 export const versionHistory = [
-  { version: "v3", time: "Disimpan 18 detik lalu", editor: "Dion Pratama" },
-  { version: "v2", time: "Hari ini, 09:18", editor: "Rani Siregar" },
-  { version: "v1", time: "Hari ini, 08:47", editor: "Dion Pratama" },
+  { version: "v3", time: "Saved 18 seconds ago", editor: "Dion Pratama" },
+  { version: "v2", time: "Today, 09:18", editor: "Rani Siregar" },
+  { version: "v1", time: "Today, 08:47", editor: "Dion Pratama" },
 ];
 
 export const collaborators = [
@@ -185,9 +185,9 @@ export const inviteSuggestions = [
 ];
 
 export const collaborationGuide = [
-  "Klik Invite collaborator, lalu masukkan email, username, atau pilih team yang relevan.",
-  "Pilih permission: Editor untuk ikut menulis, Commenter untuk review, Viewer untuk baca saja.",
-  "Setelah diundang, collaborator bisa membuka worklog yang sama dan menambahkan bagian mereka langsung.",
+  "Click Invite collaborator, then enter an email, username, or select a relevant team.",
+  "Choose permission: Editor to co-write, Commenter for review, Viewer for reading only.",
+  "Once invited, collaborators can open the same worklog and add their sections directly.",
 ];
 
 export const activeInvites = [
@@ -200,27 +200,27 @@ export const assistantMessages = [
     role: "user",
     author: "Dion",
     time: "09:24",
-    content: "Bagaimana cara setup environment untuk project Atlas tanpa menunggu engineer senior online?",
+    content: "How do I set up the environment for the Atlas project without waiting for a senior engineer to come online?",
   },
   {
     role: "assistant",
     author: "Nebwork AI",
     time: "09:24",
     content:
-      "Berdasarkan 3 worklog terbaru, jalur tercepat adalah: aktifkan akses VPN, clone repo Atlas Core API, jalankan seed data atlas-dev-lite, lalu validasi healthcheck di /readyz. Saya juga menemukan checklist onboarding 35 menit yang paling sering disimpan tim baru.",
+      "Based on the 3 latest worklogs, the fastest path is: enable VPN access, clone the Atlas Core API repo, run the atlas-dev-lite seed data, then validate healthcheck at /readyz. I also found the 35-minute onboarding checklist most frequently saved by new teams.",
   },
   {
     role: "user",
     author: "Dion",
     time: "09:25",
-    content: "Siapa expert yang bisa saya kontak kalau seed data gagal?",
+    content: "Who is the expert I can contact if the seed data fails?",
   },
   {
     role: "assistant",
     author: "Nebwork AI",
     time: "09:25",
     content:
-      "Expert yang paling relevan adalah Fikri Mahendra untuk masalah seed data dan Kevin Halim untuk isu konektivitas service pendukung. Confidence saya 0.89 karena keduanya tercatat sebagai author atau reviewer di worklog terkait.",
+      "The most relevant expert is Fikri Mahendra for seed data issues and Kevin Halim for supporting service connectivity issues. My confidence is 0.89 because both are recorded as authors or reviewers in related worklogs.",
   },
 ];
 
@@ -232,15 +232,15 @@ export const assistantThreads = [
 ];
 
 export const assistantPromptChips = [
-  "Bagaimana cara setup environment project Atlas?",
-  "Siapa expert untuk payroll settlement error?",
-  "Cari worklog handover yang relevan untuk karyawan baru",
-  "Apa best practice dokumentasi bug fix?",
+  "How do I set up the Atlas project environment?",
+  "Who is the expert for payroll settlement errors?",
+  "Find relevant handover worklogs for new employees",
+  "What are the best practices for bug fix documentation?",
 ];
 
 export const assistantInlineCitations = [
-  "Setup environment project Atlas untuk engineer baru dalam 35 menit",
-  "Runbook seed data Atlas versi lite untuk onboarding batch April",
+  "Set up Atlas project environment for new engineers in 35 minutes",
+  "Atlas seed data runbook (lite version) for the April onboarding batch",
 ];
 
 export const myWorklogStats = [
@@ -259,18 +259,18 @@ export const myWorklogs = [
     privacy: "Team Only",
     project: "Payroll Stabilization Q2",
     updatedAt: "Edited 18 minutes ago",
-    excerpt: "Dokumentasi recovery payroll lintas bank, escalation path, dan fallback batch untuk volume transaksi tinggi.",
+    excerpt: "Multi-bank payroll recovery documentation, escalation path, and fallback batch for high transaction volumes.",
     tags: ["#handover", "#payroll", "#troubleshooting"],
     collaborators: ["RS", "FM"],
   },
   {
     id: "my-2",
-    title: "Checklist onboarding analyst baru minggu pertama",
+    title: "New analyst onboarding checklist - week one",
     status: "Draft",
     privacy: "Private",
     project: "Finance Ops Onboarding",
     updatedAt: "Edited yesterday",
-    excerpt: "Panduan akses, worklog wajib baca, dan urutan tugas agar analyst baru tidak bingung di minggu pertama.",
+    excerpt: "Access guide, required reading worklogs, and task sequence so new analysts aren't confused in their first week.",
     tags: ["#onboarding", "#financeops"],
     collaborators: [],
   },
@@ -281,7 +281,7 @@ export const myWorklogs = [
     privacy: "Public",
     project: "Vendor Reliability",
     updatedAt: "Edited 3 days ago",
-    excerpt: "Ringkasan incident, pembelajaran tim, perubahan monitoring, dan keputusan tindak lanjut lintas fungsi.",
+    excerpt: "Incident summary, team learnings, monitoring changes, and cross-functional follow-up decisions.",
     tags: ["#incident", "#retrospective", "#vendor"],
     collaborators: ["KH", "MA", "NP"],
   },
@@ -292,7 +292,7 @@ export const myWorklogs = [
     privacy: "Team Only",
     project: "Access Governance",
     updatedAt: "Edited 5 days ago",
-    excerpt: "Dokumen kerja bersama untuk langkah revoke access, approval owner, dan audit trail saat handover.",
+    excerpt: "Collaborative work document for access revocation steps, owner approvals, and audit trails during handover.",
     tags: ["#access", "#security", "#collaboration"],
     collaborators: ["FM", "RS"],
   },
@@ -301,7 +301,7 @@ export const myWorklogs = [
 export const projectOverview = {
   name: "Project Handover: Payroll Stabilization",
   summary:
-    "Project workspace untuk mendokumentasikan proses payroll multi-bank, recovery insiden, dan playbook onboarding anggota tim baru.",
+    "Project workspace for documenting multi-bank payroll processes, incident recovery, and new team member onboarding playbooks.",
   progress: 72,
   dueDate: "16 Apr 2026",
   team: "8 contributors",
@@ -311,22 +311,22 @@ export const projectColumns = [
   {
     title: "Not Started",
     tasks: [
-      { title: "Rekam walkthrough dashboard reconciliation", owner: "Mira", priority: "Medium" },
-      { title: "Tambahkan SOP revoke access vendor", owner: "Dion", priority: "High" },
+      { title: "Record reconciliation dashboard walkthrough", owner: "Mira", priority: "Medium" },
+      { title: "Add vendor access revocation SOP", owner: "Dion", priority: "High" },
     ],
   },
   {
     title: "In Progress",
     tasks: [
-      { title: "Lengkapi runbook fallback batch transfer", owner: "Rani", priority: "High" },
-      { title: "Review metadata tags untuk AI retrieval", owner: "Fikri", priority: "Low" },
+      { title: "Complete fallback batch transfer runbook", owner: "Rani", priority: "High" },
+      { title: "Review metadata tags for AI retrieval", owner: "Fikri", priority: "Low" },
     ],
   },
   {
     title: "Completed",
     tasks: [
-      { title: "Dokumentasi root cause error settlement", owner: "Kevin", priority: "High" },
-      { title: "Checklist onboarding analyst baru", owner: "Nadia", priority: "Medium" },
+      { title: "Document settlement error root cause", owner: "Kevin", priority: "High" },
+      { title: "New analyst onboarding checklist", owner: "Nadia", priority: "Medium" },
     ],
   },
 ];
@@ -339,10 +339,10 @@ export const projectMembers = [
 ];
 
 export const projectActivity = [
-  "Rani menambahkan section baru: 'Escalation matrix'",
-  "Fikri memberi komentar pada task metadata AI",
-  "Mira menyelesaikan checklist onboarding batch April",
-  "Kevin mengunggah lampiran postmortem 502 gateway",
+  "Rani added a new section: 'Escalation matrix'",
+  "Fikri commented on the AI metadata task",
+  "Mira completed the April onboarding batch checklist",
+  "Kevin uploaded the 502 gateway postmortem attachment",
 ];
 
 export const projectMilestones = [
@@ -353,7 +353,7 @@ export const projectMilestones = [
 ];
 
 export const analyticsSummary = [
-  { label: "Annual turnover savings", value: "Rp 182M", detail: "projected for 100 employees" },
+  { label: "Annual turnover savings", value: "IDR 182M", detail: "projected for 100 employees" },
   { label: "Search success rate", value: "78%", detail: "useful worklog found in first session" },
   { label: "AI adoption in new hires", value: "63%", detail: "within first 90 days" },
   { label: "Critical project coverage", value: "81%", detail: "documented with handover-ready depth" },
@@ -376,7 +376,38 @@ export const roiTrend = [
 ];
 
 export const analyticsNotes = [
-  "Tim yang memakai template handover mencapai time-to-productivity tercepat",
-  "Kategori dengan knowledge gap tertinggi masih berada di Finance Ops dan Vendor Management",
-  "Feed dengan sorting 'Relevant to Me' meningkatkan save rate 1.7x dibanding chronological murni",
+  "Teams using handover templates achieve the fastest time-to-productivity",
+  "The categories with the highest knowledge gaps remain Finance Ops and Vendor Management",
+  "Feeds with 'Relevant to Me' sorting increase save rate 1.7x compared to purely chronological ones",
+];
+
+export const assistantStats = [
+  { label: "Questions answered", value: "1,284" },
+  { label: "Time saved", value: "340h" },
+  { label: "Confidence score", value: "94%" },
+];
+
+export const assistantSources = [
+  {
+    title: "Set up Atlas project environment for new engineers in 35 minutes",
+    author: "Fikri Mahendra",
+    confidence: 98,
+    excerpt: "Steps to enable VPN, clone repo, and run seed data for local dev.",
+  },
+  {
+    title: "Runbook seed data Atlas version lite",
+    author: "Kevin Halim",
+    confidence: 85,
+    excerpt: "Troubleshooting steps if healthcheck /readyz fails after seeding.",
+  },
+];
+
+export const assistantExperts = [
+  { name: "Fikri Mahendra", role: "Backend Engineer", initials: "FM", specialty: "Core API" },
+  { name: "Kevin Halim", role: "SRE", initials: "KH", specialty: "Infrastructure" },
+];
+
+export const knowledgeGaps = [
+  "How to handle vendor settlement timeout in bank batch?",
+  "Standard operating procedure for revoking access of terminated vendors.",
 ];

@@ -1,6 +1,6 @@
-import { Filter, Flame, Sparkles, Users2 } from "lucide-react";
+import { Calendar as CalendarIcon, Filter, Flame, Sparkles, Tags, Users2, X } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 
 import { WORKLOG_ENDPOINTS } from "@/config/api";
 import { AppShell } from "@/components/nebwork/app-shell-v2";
@@ -10,6 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { filterChips } from "@/data/nebwork-mock";
 
 const FEED_BUCKETS = ["For You", "Following", "Trending"];
@@ -23,14 +34,14 @@ const getInitials = (name = "Nebwork") =>
     .toUpperCase();
 
 const relativeTime = (dateValue) => {
-  if (!dateValue) return "Baru saja";
+  if (!dateValue) return "Just now";
 
   const now = Date.now();
   const diffInMinutes = Math.max(1, Math.floor((now - new Date(dateValue).getTime()) / 60000));
 
-  if (diffInMinutes < 60) return `${diffInMinutes} menit lalu`;
-  if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} jam lalu`;
-  return `${Math.floor(diffInMinutes / 1440)} hari lalu`;
+  if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+  if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
+  return `${Math.floor(diffInMinutes / 1440)} days ago`;
 };
 
 const formatPrivacyLabel = (privacyLevel) => {
@@ -49,17 +60,29 @@ export default function NebworkHome() {
   const [feed, setFeed] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const isInitialMount = useRef(true);
+
+  // Filter States
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [tempFilters, setTempFilters] = useState({
+    dateFrom: "",
+    dateTo: "",
+    tags: "",
+  });
+  const [appliedFilters, setAppliedFilters] = useState({
+    dateFrom: "",
+    dateTo: "",
+    tags: "",
+  });
 
   useEffect(() => {
     if (externalSearch !== searchValue) {
       setSearchValue(externalSearch);
     }
-  }, [externalSearch, searchValue]);
+  }, [externalSearch]);
 
   useEffect(() => {
-    if (searchValue === externalSearch) {
-      return;
-    }
+    if (searchValue === externalSearch) return;
 
     const nextParams = new URLSearchParams(searchParams);
     if (searchValue.trim()) {
@@ -68,16 +91,15 @@ export default function NebworkHome() {
       nextParams.delete("search");
     }
     setSearchParams(nextParams, { replace: true });
-  }, [externalSearch, searchParams, searchValue, setSearchParams]);
+  }, [searchValue]);
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
     const controller = new AbortController();
-    const timeout = setTimeout(async () => {
+    
+    const performFetch = async () => {
       setIsLoading(true);
       setError("");
 
@@ -88,26 +110,21 @@ export default function NebworkHome() {
           limit: "30",
         });
 
-        if (searchValue.trim()) {
-          params.set("search", searchValue.trim());
-        }
-
-        if (activeBucket === "Trending") {
-          params.set("sort", "trending");
-        }
+        if (searchValue.trim()) params.set("search", searchValue.trim());
+        if (activeBucket === "Trending") params.set("sort", "trending");
+        
+        // Apply Advanced Filters
+        if (appliedFilters.dateFrom) params.set("from", appliedFilters.dateFrom);
+        if (appliedFilters.dateTo) params.set("to", appliedFilters.dateTo);
+        if (appliedFilters.tags) params.set("tag", appliedFilters.tags);
 
         const response = await fetch(`${WORKLOG_ENDPOINTS.LIST}?${params.toString()}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           signal: controller.signal,
         });
 
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to load home feed");
-        }
+        if (!response.ok) throw new Error(data.message || "Failed to load home feed");
 
         setFeed(data.worklogs || []);
       } catch (fetchError) {
@@ -119,13 +136,35 @@ export default function NebworkHome() {
           setIsLoading(false);
         }
       }
-    }, 250);
-
-    return () => {
-      controller.abort();
-      clearTimeout(timeout);
     };
-  }, [activeBucket, searchValue]);
+
+    if (isInitialMount.current) {
+      performFetch();
+      isInitialMount.current = false;
+    } else {
+      const timeout = setTimeout(performFetch, 400);
+      return () => {
+        controller.abort();
+        clearTimeout(timeout);
+      };
+    }
+
+    return () => controller.abort();
+  }, [activeBucket, searchValue, appliedFilters]);
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(tempFilters);
+    setIsFilterOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    const reset = { dateFrom: "", dateTo: "", tags: "" };
+    setTempFilters(reset);
+    setAppliedFilters(reset);
+    setIsFilterOpen(false);
+  };
+
+  const activeFiltersCount = Object.values(appliedFilters).filter(Boolean).length;
 
   const visibleFeed = useMemo(() => {
     const mapped = feed.map((item) => ({
@@ -135,7 +174,7 @@ export default function NebworkHome() {
       privacy: formatPrivacyLabel(item.privacyLevel),
       publishedAgo: relativeTime(item.publishedAt || item.updatedAt || item.createdAt),
       title: item.title,
-      excerpt: item.summary || item.excerpt || "Belum ada ringkasan worklog.",
+      excerpt: item.summary || item.excerpt || "No worklog summary available.",
       tags: (item.tag || []).slice(0, 4).map(withHash),
       initials: getInitials(item.author?.name || "Nebwork"),
       author: item.author?.name || "Unknown author",
@@ -152,14 +191,6 @@ export default function NebworkHome() {
     if (activeBucket === "Following") {
       const collaborativeOnly = mapped.filter((item) => item.isCollaborative);
       return collaborativeOnly.length > 0 ? collaborativeOnly : mapped;
-    }
-
-    if (activeBucket === "Trending") {
-      return [...mapped].sort((left, right) => {
-        const leftScore = left.metrics.likes + left.metrics.comments + left.metrics.views;
-        const rightScore = right.metrics.likes + right.metrics.comments + right.metrics.views;
-        return rightScore - leftScore;
-      });
     }
 
     return mapped;
@@ -205,7 +236,7 @@ export default function NebworkHome() {
   return (
     <AppShell
       title="Knowledge feed"
-      description="Feed sosial untuk worklog terpublikasi, discovery cepat, dan transfer pengetahuan lintas tim."
+      description="Social feed for published worklogs, fast discovery, and cross-team knowledge transfer."
       actions={
         <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
           <Link to="/worklog/new">Create worklog</Link>
@@ -221,7 +252,7 @@ export default function NebworkHome() {
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.target.value)}
                 className="h-auto border-none bg-transparent p-0 shadow-none focus-visible:ring-0"
-                placeholder="Cari worklog, tag, atau author yang relevan..."
+                placeholder="Search worklogs, tags, or relevant authors..."
               />
             </div>
 
@@ -237,10 +268,75 @@ export default function NebworkHome() {
                   {bucket}
                 </Button>
               ))}
-              <Button size="sm" variant="ghost" className="rounded-full">
-                <Filter className="h-4 w-4" />
-                Advanced filters
-              </Button>
+              
+              <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" variant={activeFiltersCount > 0 ? "secondary" : "ghost"} className="rounded-full relative">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Advanced Filters
+                    {activeFiltersCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[10px] text-white">
+                        {activeFiltersCount}
+                      </span>
+                    )}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] rounded-[24px]">
+                  <DialogHeader>
+                    <DialogTitle>Advanced Filters</DialogTitle>
+                    <DialogDescription>
+                      Filter worklogs by date range and specific tags for more precise results.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-6 py-4">
+                    <div className="grid gap-2">
+                      <Label className="flex items-center gap-2">
+                        <CalendarIcon className="h-4 w-4 text-blue-500" /> Date Range
+                      </Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">From</span>
+                          <Input 
+                            type="date" 
+                            value={tempFilters.dateFrom} 
+                            onChange={(e) => setTempFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
+                            className="rounded-xl"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">To</span>
+                          <Input 
+                            type="date" 
+                            value={tempFilters.dateTo} 
+                            onChange={(e) => setTempFilters(prev => ({ ...prev, dateTo: e.target.value }))}
+                            className="rounded-xl"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="flex items-center gap-2">
+                        <Tags className="h-4 w-4 text-teal-500" /> Specific Tags
+                      </Label>
+                      <Input 
+                        placeholder="e.g. #engineering, #handover" 
+                        value={tempFilters.tags}
+                        onChange={(e) => setTempFilters(prev => ({ ...prev, tags: e.target.value }))}
+                        className="rounded-xl"
+                      />
+                      <p className="text-[10px] text-slate-500 italic">Separate tags with commas</p>
+                    </div>
+                  </div>
+                  <DialogFooter className="flex justify-between sm:justify-between">
+                    <Button variant="ghost" onClick={handleResetFilters} className="rounded-xl text-slate-500">
+                      Reset All
+                    </Button>
+                    <Button onClick={handleApplyFilters} className="rounded-xl bg-blue-600">
+                      Apply Filters
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -258,6 +354,29 @@ export default function NebworkHome() {
           </CardContent>
         </Card>
 
+        {activeFiltersCount > 0 && (
+          <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-1">
+            {appliedFilters.dateFrom && (
+              <Badge variant="secondary" className="rounded-full px-3 py-1 bg-blue-50 text-blue-700 border-blue-100">
+                From: {appliedFilters.dateFrom}
+                <X className="ml-2 h-3 w-3 cursor-pointer" onClick={() => setAppliedFilters(p => ({ ...p, dateFrom: "" }))} />
+              </Badge>
+            )}
+            {appliedFilters.dateTo && (
+              <Badge variant="secondary" className="rounded-full px-3 py-1 bg-blue-50 text-blue-700 border-blue-100">
+                To: {appliedFilters.dateTo}
+                <X className="ml-2 h-3 w-3 cursor-pointer" onClick={() => setAppliedFilters(p => ({ ...p, dateTo: "" }))} />
+              </Badge>
+            )}
+            {appliedFilters.tags && (
+              <Badge variant="secondary" className="rounded-full px-3 py-1 bg-teal-50 text-teal-700 border-teal-100">
+                Tags: {appliedFilters.tags}
+                <X className="ml-2 h-3 w-3 cursor-pointer" onClick={() => setAppliedFilters(p => ({ ...p, tags: "" }))} />
+              </Badge>
+            )}
+          </div>
+        )}
+
         {error ? (
           <Card className="border-red-200 bg-red-50">
             <CardContent className="p-5 text-sm text-red-700">{error}</CardContent>
@@ -267,22 +386,39 @@ export default function NebworkHome() {
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_360px]">
           <div className="space-y-5">
             {isLoading ? (
-              <Card className="bg-white/[0.9]">
-                <CardContent className="p-6 text-sm text-slate-500">Loading published worklogs...</CardContent>
-              </Card>
-            ) : null}
-
-            {!isLoading && visibleFeed.length === 0 ? (
-              <Card className="bg-white/[0.9]">
-                <CardContent className="p-6 text-sm text-slate-500">
-                  Belum ada worklog published yang cocok dengan pencarian ini.
-                </CardContent>
-              </Card>
-            ) : null}
-
-            {visibleFeed.map((item) => (
-              <FeedCard key={item.id} item={item} />
-            ))}
+              <div className="space-y-5">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i} className="border-border/60 bg-white/60">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-4 mb-4">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                      </div>
+                      <Skeleton className="h-6 w-3/4 mb-4" />
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-4 w-5/6" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <>
+                {visibleFeed.length === 0 ? (
+                  <Card className="bg-white/[0.9]">
+                    <CardContent className="p-6 text-sm text-slate-500">
+                      No published worklogs found for this search/filter.
+                    </CardContent>
+                  </Card>
+                ) : (
+                  visibleFeed.map((item) => (
+                    <FeedCard key={item.id} item={item} />
+                  ))
+                )}
+              </>
+            )}
           </div>
 
           <div className="space-y-5">
@@ -292,12 +428,14 @@ export default function NebworkHome() {
                   <Flame className="h-5 w-5 text-[#2563eb]" />
                   Trending topics
                 </CardTitle>
-                <CardDescription>Topik dengan engagement tertinggi dari worklog yang sudah terpublish.</CardDescription>
+                <CardDescription>Topics with the highest engagement from published worklogs.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {trendingTopics.length === 0 ? (
+                {isLoading ? (
+                  [1, 2, 3].map((i) => <Skeleton key={i} className="h-10 w-full rounded-2xl" />)
+                ) : trendingTopics.length === 0 ? (
                   <div className="rounded-2xl bg-[#f8fafc] px-4 py-3 text-sm text-slate-500">
-                    Belum ada topic yang cukup data.
+                    Insufficient data for topics.
                   </div>
                 ) : trendingTopics.map((topic) => (
                   <div key={topic.label} className="flex items-center justify-between rounded-2xl bg-[#f8fafc] px-4 py-3">
@@ -314,12 +452,22 @@ export default function NebworkHome() {
                   <Users2 className="h-5 w-5 text-[#2563eb]" />
                   Top contributors
                 </CardTitle>
-                <CardDescription>Kontributor yang paling konsisten mendokumentasikan knowledge kritis.</CardDescription>
+                <CardDescription>Contributors who consistently document critical knowledge.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {topContributors.length === 0 ? (
+                {isLoading ? (
+                  [1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <Skeleton className="h-11 w-11 rounded-full" />
+                      <div className="space-y-2 flex-1">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
+                    </div>
+                  ))
+                ) : topContributors.length === 0 ? (
                   <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
-                    Belum ada contributor yang tampil di feed.
+                    No contributors shown in the feed yet.
                   </div>
                 ) : topContributors.map((person) => (
                   <div key={person.name} className="flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-white px-4 py-3">

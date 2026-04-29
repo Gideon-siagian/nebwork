@@ -67,7 +67,7 @@ export default function NebworkLogin() {
               Welcome back to your knowledge workspace.
             </h1>
             <p className="max-w-xl text-base leading-7 text-slate-600">
-              Masuk kembali untuk membuka worklog, melanjutkan dokumentasi tim, dan menjaga knowledge perusahaan tetap hidup.
+              Sign back in to open worklogs, continue team documentation, and keep company knowledge alive.
             </p>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function NebworkLogin() {
           <CardContent className="space-y-5 p-8">
             <div className="space-y-2">
               <h2 className="font-display text-3xl text-slate-900">Sign in</h2>
-              <p className="text-sm text-slate-500">Masuk dengan akun backend Nebwork untuk mencoba worklog dan AI assistant secara nyata.</p>
+              <p className="text-sm text-slate-500">Sign in with a Nebwork backend account to experience real worklogs and the AI assistant.</p>
             </div>
 
             <form className="space-y-4" onSubmit={handleSubmit}>

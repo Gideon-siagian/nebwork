@@ -16,7 +16,7 @@ export default function NebworkAssistantChat() {
   const [messages, setMessages] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(null);
-  const [inputValue, setInputValue] = useState("Bantu saya cari worklog handover yang paling relevan untuk analyst baru.");
+  const [inputValue, setInputValue] = useState("Help me find the most relevant handover worklogs for a new analyst.");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [error, setError] = useState("");
@@ -216,7 +216,7 @@ export default function NebworkAssistantChat() {
           role: "assistant",
           author: "Nebwork AI",
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          content: "Saya belum bisa menjawab sekarang. Coba lagi setelah backend AI dan data worklog siap.",
+          content: "I can't answer right now. Please try again once the AI backend and worklog data are ready.",
           isError: true,
         },
       ]);
@@ -228,7 +228,7 @@ export default function NebworkAssistantChat() {
   return (
     <AppShell
       title="AI assistant"
-      description="Workspace chat untuk bertanya, mencari worklog, dan belajar dari dokumentasi perusahaan secara natural."
+      description="Workspace chat to ask questions, search worklogs, and learn from company documentation naturally."
       actions={
         <Button onClick={handleNewChat} className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
           <Plus className="h-4 w-4" />
@@ -250,8 +250,7 @@ export default function NebworkAssistantChat() {
                 What you can ask
               </div>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Cari worklog serupa, minta ringkasan onboarding, atau temukan expert yang pernah menangani kasus yang
-                sama.
+                Search for similar worklogs, request onboarding summaries, or find experts who have handled similar cases.
               </p>
             </div>
 
@@ -291,7 +290,7 @@ export default function NebworkAssistantChat() {
                 </div>
                 <div>
                   <p className="font-display text-2xl text-slate-900">Nebwork AI</p>
-                  <p className="text-sm text-slate-500">Chat-first assistant untuk knowledge discovery.</p>
+                  <p className="text-sm text-slate-500">Chat-first assistant for knowledge discovery.</p>
                 </div>
               </div>
 
@@ -326,7 +325,7 @@ export default function NebworkAssistantChat() {
               <div className="space-y-4 pt-2">
                 {messages.length === 0 ? (
                   <div className="rounded-[28px] border border-dashed border-border/70 bg-white px-5 py-6 text-sm leading-7 text-slate-500">
-                    Mulai percakapan baru untuk mencari worklog, onboarding guide, atau troubleshooting record dari tim Anda.
+                    Start a new conversation to search for worklogs, onboarding guides, or troubleshooting records from your team.
                   </div>
                 ) : null}
 

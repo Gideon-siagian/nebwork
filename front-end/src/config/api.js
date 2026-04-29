@@ -12,6 +12,7 @@ export const AUTH_ENDPOINTS = {
   PROFILE: `${BASE_URL}/api/auth/profile`,
   FORGOT_PASSWORD: `${BASE_URL}/api/auth/forgot-password`,
   RESET_PASSWORD: `${BASE_URL}/api/auth/reset-password`,
+  CHANGE_PASSWORD: `${BASE_URL}/api/auth/change-password`,
 };
 
 // WORKLOG ENDPOINTS

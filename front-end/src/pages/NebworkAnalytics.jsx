@@ -16,7 +16,7 @@ export default function NebworkAnalytics() {
   return (
     <AppShell
       title="Impact analytics"
-      description="Dashboard KPI untuk adoption, knowledge retention, AI usage, dan estimasi ROI turnover reduction."
+      description="KPI dashboard for adoption, knowledge retention, AI usage, and ROI estimation for turnover reduction."
       actions={<Button className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">Export executive snapshot</Button>}
     >
       <div className="space-y-6">
@@ -43,7 +43,7 @@ export default function NebworkAnalytics() {
                     <LineChart className="h-5 w-5 text-[#2563eb]" />
                     Adoption curve
                   </CardTitle>
-                  <CardDescription>Perkembangan author aktif bulanan vs pembaca aktif.</CardDescription>
+                  <CardDescription>Growth of monthly active authors vs. active readers.</CardDescription>
                 </div>
                 <Badge variant="secondary">MAU target 70%</Badge>
               </div>
@@ -80,9 +80,9 @@ export default function NebworkAnalytics() {
                     <Wallet className="h-5 w-5 text-[#2563eb]" />
                     ROI projection
                   </CardTitle>
-                  <CardDescription>Estimasi penghematan biaya turnover per kuartal.</CardDescription>
+                  <CardDescription>Estimated turnover cost savings per quarter.</CardDescription>
                 </div>
-                <Badge variant="accent">Rp juta</Badge>
+                <Badge variant="accent">IDR millions</Badge>
               </div>
             </CardHeader>
             <CardContent className="h-[340px]">
@@ -106,7 +106,7 @@ export default function NebworkAnalytics() {
                 <BrainCircuit className="h-5 w-5 text-[#2563eb]" />
                 What the data says
               </CardTitle>
-              <CardDescription>Insight ringkas yang bisa langsung dibawa ke executive review.</CardDescription>
+              <CardDescription>Concise insights ready for executive review.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {analyticsNotes.map((note) => (
@@ -120,19 +120,19 @@ export default function NebworkAnalytics() {
           <Card className="bg-white/[0.85]">
             <CardHeader>
               <CardTitle className="text-2xl">Decision support</CardTitle>
-              <CardDescription>Open questions yang dapat ditindaklanjuti dari dashboard ini.</CardDescription>
+              <CardDescription>Actionable open questions from this dashboard.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="rounded-2xl border border-border/60 bg-white p-4">
                 <p className="font-semibold text-slate-900">Gamification intensity</p>
                 <p className="mt-1 text-sm leading-6 text-slate-600">
-                  Leaderboard publik bisa menaikkan engagement, tetapi perlu toggle agar tidak mengganggu budaya tim tertentu.
+                  Public leaderboards can increase engagement, but need a toggle to avoid disrupting specific team cultures.
                 </p>
               </div>
               <div className="rounded-2xl border border-border/60 bg-white p-4">
                 <p className="font-semibold text-slate-900">Pilot team prioritization</p>
                 <p className="mt-1 text-sm leading-6 text-slate-600">
-                  Engineering dan Finance Ops terlihat memberi ROI tercepat karena knowledge concentration dan onboarding cost-nya tinggi.
+                  Engineering and Finance Ops show the fastest ROI due to high knowledge concentration and onboarding costs.
                 </p>
               </div>
               <Button variant="outline" className="w-full rounded-2xl">

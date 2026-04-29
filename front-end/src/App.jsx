@@ -7,7 +7,9 @@ import NebworkEditor from "@/pages/NebworkEditor";
 import NebworkHome from "@/pages/NebworkHome";
 import NebworkLogin from "@/pages/NebworkLogin";
 import NebworkMyWorklogs from "@/pages/NebworkMyWorklogs";
+import NebworkProfile from "@/pages/NebworkProfile";
 import NebworkNotFound from "@/pages/NebworkNotFound";
+import { Toaster } from "@/components/ui/sonner";
 
 const RequireSession = ({ children }) => {
   const token = sessionStorage.getItem("token");
@@ -27,6 +29,7 @@ const RequireAdmin = ({ children }) => {
 const App = () => {
   return (
     <BrowserRouter>
+      <Toaster position="top-center" richColors />
       <Routes>
         <Route path="/login" element={<NebworkLogin />} />
         <Route path="/" element={<RequireSession><NebworkHome /></RequireSession>} />
@@ -35,6 +38,7 @@ const App = () => {
         <Route path="/worklog/:id" element={<RequireSession><NebworkEditor /></RequireSession>} />
         <Route path="/assistant" element={<RequireSession><NebworkAssistantChat /></RequireSession>} />
         <Route path="/analytics" element={<RequireSession><NebworkAnalytics /></RequireSession>} />
+        <Route path="/profile" element={<RequireSession><NebworkProfile /></RequireSession>} />
         <Route path="/admin" element={<RequireSession><RequireAdmin><NebworkAdmin /></RequireAdmin></RequireSession>} />
         <Route path="*" element={<NebworkNotFound />} />
       </Routes>

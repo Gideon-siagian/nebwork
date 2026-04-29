@@ -8,7 +8,7 @@ export default function NebworkNotFound() {
   return (
     <AppShell
       title="Page not found"
-      description="Halaman yang dicari belum tersedia di prototipe frontend Nebwork."
+      description="The page you're looking for is not yet available in the Nebwork frontend prototype."
       actions={
         <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
           <Link to="/">Back to home</Link>
@@ -21,8 +21,8 @@ export default function NebworkNotFound() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-slate-600">
-            Route ini belum dimasukkan ke demo frontend. Gunakan navigasi kiri untuk menjelajahi Home Feed, Editor,
-            AI Assistant, Projects, dan Analytics.
+            This route hasn't been added to the frontend demo yet. Use the left navigation to explore the Home Feed, Editor,
+            AI Assistant, Projects, and Analytics.
           </p>
           <Button asChild className="rounded-2xl bg-[linear-gradient(135deg,#0f172a_0%,#2563eb_100%)] hover:bg-[linear-gradient(135deg,#020617_0%,#1d4ed8_100%)]">
             <Link to="/">Return to Nebwork</Link>
