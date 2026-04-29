@@ -1,4 +1,4 @@
-import { Bell, BrainCircuit, ChevronUp, FilePlus2, Files, House, LogOut, Menu, Search, Sparkles, UserCheck, Users } from "lucide-react";
+import { Bell, BrainCircuit, ChevronUp, FilePlus2, Files, House, LogOut, Menu, Search, Sparkles, UserCheck, Users, BarChart2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -32,6 +32,7 @@ const baseNavigation = [
   { label: "My Worklogs", href: "/my-worklogs", icon: Files },
   { label: "Worklog", href: "/worklog/new", icon: FilePlus2 },
   { label: "AI Assistant", href: "/assistant", icon: BrainCircuit },
+  { label: "Stats", href: "/stats", icon: BarChart2 },
 ];
 
 const buildNavigation = (user) => (

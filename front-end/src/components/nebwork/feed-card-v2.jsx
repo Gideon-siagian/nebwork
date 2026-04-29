@@ -21,10 +21,16 @@ export function FeedCard({ item }) {
   return (
     <Card className="overflow-hidden border-border/70 bg-white/90 backdrop-blur">
       <CardContent className="space-y-5 p-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="secondary">{item.team}</Badge>
-          <Badge variant="outline">{item.privacy}</Badge>
-          <span className="text-xs text-muted-foreground">{item.publishedAgo}</span>
+        <div className="flex flex-wrap items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">{item.team}</Badge>
+            <Badge variant="outline">{item.privacy}</Badge>
+            <span className="text-xs text-muted-foreground">{item.publishedAgo}</span>
+          </div>
+          <span className="flex items-center gap-1 text-xs text-slate-500">
+            <Eye className="h-3.5 w-3.5" />
+            {item.metrics.views}
+          </span>
         </div>
 
         <div className="space-y-2">
@@ -56,20 +62,7 @@ export function FeedCard({ item }) {
             </div>
           </div>
 
-          <div className="hidden items-center gap-4 text-xs text-slate-500 sm:flex">
-            <span className="flex items-center gap-1">
-              <Eye className="h-3.5 w-3.5" />
-              {item.metrics.views}
-            </span>
-            <span className="flex items-center gap-1">
-              <MessageCircle className="h-3.5 w-3.5" />
-              {item.metrics.comments}
-            </span>
-            <span className="flex items-center gap-1">
-              <Heart className="h-3.5 w-3.5" />
-              {item.metrics.likes}
-            </span>
-          </div>
+          {/* Eye icon moved to top right */}
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
@@ -82,13 +75,9 @@ export function FeedCard({ item }) {
           </div>
 
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" onClick={() => item.href && navigate(item.href)}>
+            <Button size="sm" variant="outline" onClick={() => item.href && navigate(item.href)}>
               <BookmarkPlus className="h-4 w-4" />
               Open
-            </Button>
-            <Button size="sm" variant="outline" onClick={handleShare}>
-              <Share2 className="h-4 w-4" />
-              Share
             </Button>
           </div>
         </div>

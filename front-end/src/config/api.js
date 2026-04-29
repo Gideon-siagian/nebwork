@@ -24,6 +24,7 @@ export const WORKLOG_ENDPOINTS = {
   LOGHISTORY_ONE: (id) => `${BASE_URL}/api/worklogs/loghistory/${id}`, // GET Single Log
   COLLABORATORS: (id) => `${BASE_URL}/api/worklogs/${id}/collaborators`,
   VIDEO_MEETING: (id) => `${BASE_URL}/api/worklogs/${id}/video-meeting`,
+  MY_STATS: `${BASE_URL}/api/worklogs/my-stats`,      // GET user stats
 };
 
 // ADMIN ENDPOINTS
