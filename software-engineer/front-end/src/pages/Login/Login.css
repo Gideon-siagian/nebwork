@@ -1,0 +1,422 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap');
+@font-face {
+  font-family: 'Sensation';
+  src: url('../fonts/Sensation_Bold.woff2') format('woff2'),
+       url('../fonts/Sensation_Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  height: 100%;
+}
+
+#root {
+  background: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(180deg, #524AAD 0%, #FFFFFF 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+  background: transparent;
+}
+
+.login-container {
+  background: linear-gradient(180deg, #000000 0%, #3C36BC 100%);
+  border-radius: 45px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 80vw;
+  height: 80vh;
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+.login-content {
+  padding: 60px 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.welcome-section {
+  text-align: left;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logo-only {
+  width: 100px;
+  height: 100px;
+  margin-top: -10px;
+  margin-bottom: 0px;
+  object-fit: contain;
+  object-position: left center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.welcome-section h1 {
+  font-size: 28px;
+  font-weight: normal;
+  color: white;
+  line-height: 1.2;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  margin-bottom: 5px;
+}
+
+.text-only {
+  width: 250px;
+  height: 60px;
+  margin-top: -10px;
+  object-fit: contain;
+  object-position: left center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.input-group {
+  position: relative;
+  width: 40%;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: white;
+  font-family: 'Sensation', sans-serif;
+  font-weight: bold;
+}
+
+.input-field {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 8px 0;
+  background: transparent;
+  color: white
+}
+
+.underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #ddd;
+}
+
+.input-field:focus + .underline {
+  background-color: #35FFF8;
+}
+
+.input-field:focus {
+  color: white;
+}
+
+.login-button {
+  background-color: white;
+  color: #11009E;
+  border: none;
+  padding: 10px 35px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 40%;
+  align-self: flex-start;
+  transition: background-color 0.2s;
+}
+
+.login-button:hover {
+  background-color: #C4B0FF;
+  color: white;
+}
+
+.forgot-password {
+  text-align: left;
+  margin-top: 25px;
+  font-size: 14px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+}
+
+.forgot-link {
+  color: #35FFF8;
+  text-decoration: underline;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.separator {
+  position: absolute;
+  top: 50%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 600px;
+  border: 2px solid white;
+  border-left: none;
+  border-radius: 0 300px 300px 0;
+}
+
+.docs-icon {
+  position: absolute;
+  top: 20px;
+  right: 5px;
+  width: clamp(200px, 37.5vw, 300px);
+  height: auto;
+  z-index: 10;
+  color: #FFFFFF;
+  transform: rotate(8deg);
+}
+
+.docs-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+.pencil-icon {
+  position: absolute;
+  top: 20px;
+  right: 390px;
+  width: clamp(130px, 12.5vw, 170px); 
+  height: auto;
+  z-index: 10;
+  color: #FFFFFF;
+  transform: rotate(-78deg);
+}
+
+.pencil-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+.people-icon {
+  position: absolute;
+  top: 290px; 
+  right: 205px;
+  width: clamp(145px, 25vw, 215px);  
+  height: auto;
+  z-index: 10;
+  color: #FFFFFF;
+  transform: rotate(-4deg);
+}
+
+.people-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+.folder-icon {
+  position: absolute;
+  top: 460px;  
+  right: 450px;
+  width: clamp(80px, 11vw, 115px); 
+  height: auto;
+  z-index: 10;
+  color: #FFFFFF;
+  transform: rotate(10deg);
+}
+
+.folder-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+.magnifier-icon {
+  position: absolute;
+  bottom: 5px;  
+  right: 5px;
+  width: clamp(75px, 9vw, 105px); 
+  height: auto;
+  z-index: 10;
+  color: #FFFFFF;
+}
+
+.magnifier-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .login-container {
+    width: 85vw;
+    height: 85vh;
+  }
+
+  .login-content {
+    padding: 50px 60px;
+  }
+
+  .docs-icon {
+    width: clamp(140px, 22vw, 200px);
+    right: 15px;
+  }
+
+  .pencil-icon {
+    right: 350px;
+    width: clamp(70px, 11vw, 100px);
+  }
+
+  .people-icon {
+    right: 180px;
+    top: 280px;
+    width: clamp(120px, 19vw, 180px);
+  }
+
+  .folder-icon {
+    right: 400px;
+    top: 450px;
+    width: clamp(65px, 10vw, 95px);
+  }
+
+  .magnifier-icon {
+    width: clamp(50px, 8vw, 75px);
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    width: 90vw;
+    height: 90vh;
+  }
+
+  .separator {
+    display: none; /* Hide separator on mobile */
+  }
+  
+  .login-content {
+    padding: 40px 40px;
+  }
+
+  .input-group {
+    width: 70%;
+  }
+
+  .login-button {
+    width: 70%;
+  }
+
+  .welcome-section {
+    margin-bottom: 40px;
+  }
+
+  /* Hide decorative icons on tablet */
+  .docs-icon,
+  .pencil-icon,
+  .people-icon,
+  .folder-icon,
+  .magnifier-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 0;
+  }
+
+  .login-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .login-content {
+    padding: 30px 25px;
+  }
+  
+  .welcome-section {
+    margin-bottom: 35px;
+  }
+
+  .logo-only {
+    width: 60px;
+  }
+
+  .welcome-section h1 {
+    font-size: 24px;
+  }
+  
+  .text-only {
+    width: 200px;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .login-form {
+    gap: 25px;
+  }
+
+  .input-group label {
+    font-size: 13px;
+  }
+
+  .input-field {
+    font-size: 15px;
+  }
+
+  .login-button {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+
+  .forgot-password {
+    font-size: 13px;
+    margin-top: 20px;
+  }
+}
