@@ -35,51 +35,26 @@ const upload = multer({
  * @desc Upload a single file to DigitalOcean Spaces
  * @access Private
  */
-router.post('/', protect, upload.single('file'), (error, req, res, next) => {
-  if (error instanceof multer.MulterError) {
-    if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(413).json({
-        success: false,
-        message: 'File too large',
-        error: `File size exceeds the maximum limit of 100MB. Your file is too big to upload.`,
-        maxSize: '100MB'
-      });
-    }
-    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid field name',
-        error: `Expected field name 'file', but got '${error.field}'. Please use 'file' as the form-data key.`
-      });
-    }
-    return res.status(400).json({
-      success: false,
-      message: 'Upload error',
-      error: error.message
-    });
-  }
-  if (error) {
-    return res.status(400).json({
-      success: false,
-      message: 'File validation failed',
-      error: error.message
-    });
-  }
-  next();
-}, uploadFile);
+router.post('/', protect, upload.single('file'), uploadFile);
 
 /**
  * @route POST /api/upload/multiple
  * @desc Upload multiple files to DigitalOcean Spaces
  * @access Private
  */
-router.post('/multiple', protect, upload.array('files', 10), (error, req, res, next) => {
+router.post('/multiple', protect, upload.array('files', 10), uploadMultipleFiles);
+
+// Multer and file validation error handler (must be after all routes)
+router.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
+      const isMultiple = req.path === '/multiple';
       return res.status(413).json({
         success: false,
         message: 'File too large',
-        error: `One or more files exceed the maximum limit of 100MB per file.`,
+        error: isMultiple
+          ? 'One or more files exceed the maximum limit of 100MB per file.'
+          : 'File size exceeds the maximum limit of 100MB. Your file is too big to upload.',
         maxSize: '100MB'
       });
     }
@@ -87,15 +62,16 @@ router.post('/multiple', protect, upload.array('files', 10), (error, req, res, n
       return res.status(400).json({
         success: false,
         message: 'Too many files',
-        error: `Maximum 10 files allowed. You tried to upload more than the limit.`,
+        error: 'Maximum 10 files allowed. You tried to upload more than the limit.',
         maxFiles: 10
       });
     }
     if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+      const expected = req.path === '/multiple' ? 'files' : 'file';
       return res.status(400).json({
         success: false,
         message: 'Invalid field name',
-        error: `Expected field name 'files', but got '${error.field}'. Please use 'files' as the form-data key.`
+        error: `Expected field name '${expected}', but got '${error.field}'. Please use '${expected}' as the form-data key.`
       });
     }
     return res.status(400).json({
@@ -111,8 +87,8 @@ router.post('/multiple', protect, upload.array('files', 10), (error, req, res, n
       error: error.message
     });
   }
-  next();
-}, uploadMultipleFiles);
+  next(error);
+});
 
 /**
  * @route DELETE /api/upload

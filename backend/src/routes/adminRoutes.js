@@ -15,5 +15,8 @@ router.delete('/employees/:id', protect, isAdmin, adminController.deleteEmployee
 router.get('/employees', protect, isAdmin, adminController.getEmployees);
 router.patch('/employees/:id/toggle-status', protect, isAdmin, adminController.toggleEmployeeStatus);
 router.get('/analytics', protect, isAdmin, adminController.getAnalytics);
+router.get('/reset-requests', protect, isAdmin, adminController.getResetRequests);
+router.patch('/reset-requests/:id/approve', protect, isAdmin, adminController.approveResetRequest);
+router.patch('/reset-requests/:id/reject', protect, isAdmin, adminController.rejectResetRequest);
 
 module.exports = router;

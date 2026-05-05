@@ -13,6 +13,8 @@ export const AUTH_ENDPOINTS = {
   FORGOT_PASSWORD: `${BASE_URL}/api/auth/forgot-password`,
   RESET_PASSWORD: `${BASE_URL}/api/auth/reset-password`,
   CHANGE_PASSWORD: `${BASE_URL}/api/auth/change-password`,
+  REQUEST_RESET: `${BASE_URL}/api/auth/request-reset`,
+  RESET_STATUS: (requestId) => `${BASE_URL}/api/auth/reset-status/${requestId}`,
 };
 
 // WORKLOG ENDPOINTS
@@ -34,6 +36,9 @@ export const ADMIN_ENDPOINTS = {
   TOGGLE_STATUS: (id) => `${BASE_URL}/api/admin/employees/${id}/toggle-status`, // PATCH toggle block/unblock
   VERSION: (id) => `${BASE_URL}/api/admin/employees/${id}/versions`,  // GET single user
   ANALYTICS: `${BASE_URL}/api/admin/analytics`,
+  RESET_REQUESTS: `${BASE_URL}/api/admin/reset-requests`,
+  APPROVE_RESET: (id) => `${BASE_URL}/api/admin/reset-requests/${id}/approve`,
+  REJECT_RESET: (id) => `${BASE_URL}/api/admin/reset-requests/${id}/reject`,
 };
 
 // CHATBOT ENDPOINTS

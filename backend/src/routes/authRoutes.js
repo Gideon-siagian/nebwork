@@ -46,6 +46,8 @@ router.post('/login', loginLimiter, authController.login);
 router.post('/logout', authController.logout);
 router.post('/forgot-password', forgotPasswordLimiter, authController.forgotPassword);
 router.post('/reset-password', resetPasswordLimiter, authController.resetPassword);
+router.post('/request-reset', forgotPasswordLimiter, authController.requestPasswordReset);
+router.get('/reset-status/:requestId', authController.checkResetStatus);
 router.get('/profile', protect, authController.getProfile);
 router.put('/profile', protect, authController.updateProfile);
 router.put('/change-password', protect, authController.changePassword);

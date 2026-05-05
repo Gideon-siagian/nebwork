@@ -67,9 +67,10 @@ exports.toggleReaction = async (req, res) => {
     }
 
     // Replace with new emoji
+    const previousEmoji = existing.emoji;
     existing.emoji = emoji;
     await existing.save();
-    return res.json({ action: 'replaced', emoji, previous: existing.emoji });
+    return res.json({ action: 'replaced', emoji, previous: previousEmoji });
 
   } catch (err) {
     res.status(500).json({ message: err.message });

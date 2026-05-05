@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, BarChart3, LogOut, PencilLine, RefreshCw, Search, ShieldCheck, Sparkles, Trash2, UserPlus, Users2 } from "lucide-react";
+import { ArrowLeft, BarChart3, CheckCircle, KeyRound, LogOut, PencilLine, RefreshCw, Search, ShieldCheck, Sparkles, Trash2, UserPlus, Users2, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { ADMIN_ENDPOINTS, AUTH_ENDPOINTS } from "@/config/api";
@@ -42,6 +42,9 @@ export default function NebworkAdmin() {
     role: "user",
   });
 
+  const [resetRequests, setResetRequests] = useState([]);
+  const [resetLoading, setResetLoading] = useState(false);
+
   const token = sessionStorage.getItem("token");
   const sessionUser = useMemo(() => {
     try {
@@ -51,6 +54,22 @@ export default function NebworkAdmin() {
       return null;
     }
   }, []);
+
+  const fetchResetRequests = async () => {
+    if (!token) return;
+    setResetLoading(true);
+    try {
+      const res = await fetch(ADMIN_ENDPOINTS.RESET_REQUESTS, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok) setResetRequests(data.data || []);
+    } catch {
+      // silently ignore - non-critical
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const fetchAdminData = async (query = "") => {
     if (!token) {
@@ -106,6 +125,10 @@ export default function NebworkAdmin() {
 
     return () => clearTimeout(timeout);
   }, [searchValue]);
+
+  useEffect(() => {
+    void fetchResetRequests();
+  }, []);
 
   const summary = useMemo(() => {
     const total = employees.length;
@@ -253,6 +276,36 @@ export default function NebworkAdmin() {
       await fetchAdminData(searchValue);
     } catch (toggleError) {
       setError(toggleError.message || "Failed to update employee status");
+    }
+  };
+
+  const handleApproveReset = async (requestId) => {
+    if (!token) return;
+    try {
+      const res = await fetch(ADMIN_ENDPOINTS.APPROVE_RESET(requestId), {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to approve request");
+      await fetchResetRequests();
+    } catch (err) {
+      setError(err.message || "Failed to approve request");
+    }
+  };
+
+  const handleRejectReset = async (requestId) => {
+    if (!token) return;
+    try {
+      const res = await fetch(ADMIN_ENDPOINTS.REJECT_RESET(requestId), {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to reject request");
+      await fetchResetRequests();
+    } catch (err) {
+      setError(err.message || "Failed to reject request");
     }
   };
 
@@ -407,6 +460,61 @@ export default function NebworkAdmin() {
               </Card>
             ))}
           </div>
+
+          <Card className="bg-white/[0.92]">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <KeyRound className="h-5 w-5 text-[#2563eb]" />
+                Password Reset Requests
+                {resetRequests.length > 0 ? (
+                  <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                    {resetRequests.length} pending
+                  </span>
+                ) : null}
+              </CardTitle>
+              <CardDescription>User requests waiting for admin approval to reset their password.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {resetLoading ? (
+                <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
+                  Loading requests...
+                </div>
+              ) : resetRequests.length === 0 ? (
+                <div className="rounded-2xl border border-border/60 bg-white px-4 py-3 text-sm text-slate-500">
+                  No pending password reset requests.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {resetRequests.map((req) => (
+                    <div key={req._id} className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-amber-100 bg-amber-50/40 p-5">
+                      <div className="space-y-1">
+                        <p className="font-display text-lg text-slate-900">{req.userId?.name || "Unknown"}</p>
+                        <p className="text-sm text-slate-500">{req.email}</p>
+                        <p className="text-xs text-slate-400">{req.userId?.division} · Requested {new Date(req.createdAt).toLocaleString()}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          className="rounded-2xl bg-green-600 hover:bg-green-700 text-white"
+                          onClick={() => handleApproveReset(req._id)}
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                          Approve
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="rounded-2xl text-red-600"
+                          onClick={() => handleRejectReset(req._id)}
+                        >
+                          <XCircle className="h-4 w-4" />
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_360px]">
             <Card className="bg-white/[0.92]">

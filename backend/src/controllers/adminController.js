@@ -3,7 +3,9 @@
 
 const User = require('../models/User');
 const WorkLog = require('../models/WorkLog');
+const PasswordResetRequest = require('../models/PasswordResetRequest');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const { validatePassword } = require('../utils/passwordValidator');
 const { isAllowedEmailDomain, getAllowedDomainsMessage } = require('../utils/emailDomainValidator');
 
@@ -238,6 +240,66 @@ module.exports = {
       });
     } catch (error) {
       return res.status(500).json({ status: 'error', code: 'SERVER_ERROR', message: 'Failed to toggle user status' });
+    }
+  },
+
+  // GET /api/admin/reset-requests - List pending password reset requests
+  getResetRequests: async (req, res) => {
+    try {
+      const requests = await PasswordResetRequest.find({ status: 'pending' })
+        .populate('userId', 'name email division')
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json({ status: 'success', data: requests });
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: 'Failed to fetch reset requests' });
+    }
+  },
+
+  // PATCH /api/admin/reset-requests/:id/approve - Approve a reset request
+  approveResetRequest: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const request = await PasswordResetRequest.findById(id);
+      if (!request) return res.status(404).json({ message: 'Request not found' });
+      if (request.status !== 'pending') return res.status(400).json({ message: 'Request is not pending' });
+
+      const user = await User.findById(request.userId);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+      const expire = Date.now() + 3600000; // 1 hour
+
+      user.resetPasswordToken = hashedToken;
+      user.resetPasswordExpire = expire;
+      await user.save();
+
+      request.status = 'approved';
+      request.resetToken = resetToken;
+      request.tokenExpire = expire;
+      await request.save();
+
+      return res.status(200).json({ status: 'success', message: 'Request approved' });
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: 'Failed to approve request' });
+    }
+  },
+
+  // PATCH /api/admin/reset-requests/:id/reject - Reject a reset request
+  rejectResetRequest: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const request = await PasswordResetRequest.findById(id);
+      if (!request) return res.status(404).json({ message: 'Request not found' });
+      if (request.status !== 'pending') return res.status(400).json({ message: 'Request is not pending' });
+
+      request.status = 'rejected';
+      await request.save();
+
+      return res.status(200).json({ status: 'success', message: 'Request rejected' });
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: 'Failed to reject request' });
     }
   },
 

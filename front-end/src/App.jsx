@@ -9,6 +9,7 @@ import NebworkMyWorklogs from "@/pages/NebworkMyWorklogs";
 import NebworkProfile from "@/pages/NebworkProfile";
 import NebworkStats from "@/pages/NebworkStats";
 import NebworkNotFound from "@/pages/NebworkNotFound";
+import WorkLogVersion from "@/pages/WorkLogVersion";
 import { Toaster } from "@/components/ui/sonner";
 
 const RequireSession = ({ children }) => {
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/my-worklogs" element={<RequireSession><NebworkMyWorklogs /></RequireSession>} />
         <Route path="/worklog/new" element={<RequireSession><NebworkEditor /></RequireSession>} />
         <Route path="/worklog/:id" element={<RequireSession><NebworkEditor /></RequireSession>} />
+        <Route path="/worklog/:id/versions" element={<RequireSession><WorkLogVersion /></RequireSession>} />
         <Route path="/assistant" element={<RequireSession><NebworkAssistantChat /></RequireSession>} />
         <Route path="/stats" element={<RequireSession><NebworkStats /></RequireSession>} />
         <Route path="/profile" element={<RequireSession><NebworkProfile /></RequireSession>} />

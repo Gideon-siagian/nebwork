@@ -425,29 +425,9 @@ exports.editWorkLog = async (req, res) => {
     });
     const embedding = await generateEmbedding(textToEmbed);
 
-    let nextCollaborators = log.collaborators || [];
-    let nextCollaboratorMeta = log.collaboratorMeta || [];
-
-    if (Array.isArray(req.body.collaborators)) {
-      nextCollaborators = ensureUniqueIds(req.body.collaborators);
-      nextCollaboratorMeta = nextCollaborators.map((collaboratorId) => ({
-        user: collaboratorId,
-        role: normalizeCollaboratorRole(
-          (log.collaboratorMeta || []).find((entry) => String(entry.user) === String(collaboratorId))?.role
-        ),
-      }));
-    }
-
-    if (Array.isArray(req.body.collaboratorMeta)) {
-      nextCollaboratorMeta = req.body.collaboratorMeta
-        .map((entry) => ({
-          user: entry.user,
-          role: normalizeCollaboratorRole(entry.role),
-        }))
-        .filter((entry) => entry.user);
-      nextCollaborators = ensureUniqueIds(nextCollaboratorMeta.map((entry) => entry.user));
-    }
-
+    // Collaborators are managed exclusively via POST/DELETE /collaborators endpoints.
+    // Never overwrite them here to prevent race conditions when a collaborator
+    // accepts an invite while the owner has the editor open.
     const updatePayload = {
       title: nextTitle,
       content: processedContent,
@@ -458,8 +438,6 @@ exports.editWorkLog = async (req, res) => {
       project: nextProject,
       department: nextDepartment,
       summary: nextSummary,
-      collaborators: nextCollaborators,
-      collaboratorMeta: nextCollaboratorMeta,
       embedding: Array.isArray(embedding) ? embedding : [],
       publishedAt: nextStatus === "published" ? (log.publishedAt || new Date()) : null,
     };
@@ -474,7 +452,6 @@ exports.editWorkLog = async (req, res) => {
         content: processedContent,
         tag: nextTags,
         media: processedMedia,
-        collaborators: nextCollaborators,
         datetime: new Date(),
       },
     });
@@ -607,7 +584,7 @@ exports.addCollaborator = async (req, res) => {
       return res.status(400).json({ message: `Invite only supports Nebwork email accounts (${getAllowedDomains().join(", ")})` });
     }
 
-    const role = normalizeCollaboratorRole(req.body.role);
+    const role = "editor";
     const candidates = await resolveCollaboratorTargets({
       email: req.body.email,
       username: req.body.username,

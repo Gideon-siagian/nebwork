@@ -1,6 +1,7 @@
 // Authentication Controller
 // Handles: login, logout, forgot password
 const User = require('../models/User')
+const PasswordResetRequest = require('../models/PasswordResetRequest')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { validatePassword } = require('../utils/passwordValidator');
@@ -107,7 +108,7 @@ module.exports = {
       user.resetPasswordExpire = Date.now() + 3600000; // 1 hour
       await user.save();
 
-      const resetUrl = `http://localhost:8080/new-password/${resetToken}`;
+      const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/new-password/${resetToken}`;
       const message = 'You are receiving this email because you (or someone else) has requested the reset of a password of NEBWORK. Please reset your password by clicking the link below (Expire in one hour): \n\n' + resetUrl;
 
       // Only send email when not explicitly disabled (useful for test env)
@@ -250,6 +251,57 @@ module.exports = {
       return res.status(500).json({message: 'Failed to reset password', error: error.message});
     }
   },
+  requestPasswordReset: async (req, res) => {
+    // POST /api/auth/request-reset - Submit reset request to admin
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Please provide an email' });
+
+    try {
+      const user = await User.findOne({ email });
+      if (!user) return res.status(404).json({ message: 'User not found with this email' });
+      if (!user.isActive) return res.status(403).json({ message: 'Your account is blocked. Contact administrator.' });
+
+      // Reuse existing pending request if any
+      const existing = await PasswordResetRequest.findOne({ userId: user._id, status: 'pending' });
+      if (existing) {
+        return res.status(200).json({
+          message: 'A reset request is already pending admin approval.',
+          requestId: existing._id
+        });
+      }
+
+      const request = new PasswordResetRequest({ userId: user._id, email: user.email });
+      await request.save();
+
+      return res.status(201).json({
+        message: 'Password reset request submitted. Waiting for admin approval.',
+        requestId: request._id
+      });
+    } catch (error) {
+      return res.status(500).json({ message: 'Failed to submit reset request', error: error.message });
+    }
+  },
+
+  checkResetStatus: async (req, res) => {
+    // GET /api/auth/reset-status/:requestId - Poll approval status
+    const { requestId } = req.params;
+    try {
+      const request = await PasswordResetRequest.findById(requestId);
+      if (!request) return res.status(404).json({ message: 'Reset request not found' });
+
+      if (request.status === 'approved') {
+        if (request.tokenExpire && request.tokenExpire < Date.now()) {
+          return res.status(400).json({ status: 'expired', message: 'Reset token has expired. Please submit a new request.' });
+        }
+        return res.status(200).json({ status: 'approved', resetToken: request.resetToken });
+      }
+
+      return res.status(200).json({ status: request.status });
+    } catch (error) {
+      return res.status(500).json({ message: 'Failed to check reset status' });
+    }
+  },
+
   changePassword: async (req, res) => {
     // PUT /api/auth/change-password - Change password for logged in user
     const { currentPassword, newPassword } = req.body;
